@@ -1,0 +1,68 @@
+.energy-widget-container {
+  display: flex;
+  justify-content: space-between;
+  background: #fff;
+  padding: 20px;
+  box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+}
+
+.energy-stat {
+  border-right: 1px solid #eee;
+  padding-right: 5vw;
+}
+
+.energy-stat,
+.energy-savings {
+  display: flex;
+  flex-direction: column;
+}
+
+.energy-stat > h2,
+.energy-today > h3,
+.energy-month > h3 {
+  margin: 0;
+  color: #333;
+}
+
+.energy-saved,
+.cost-saved {
+  padding: 1vh;
+  padding-left: 3vh;
+  padding-right: 3vh;
+  margin: 3vh;
+  box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.1);
+}
+
+.energy-today > h2 {
+  padding: 10px 0;
+  /* border-right: 1px solid #eee; */
+  color: #333;
+}
+
+.energy-saved,
+.cost-saved {
+  border-right: none;
+}
+
+.percentage-change {
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+}
+
+.positive {
+  color: #4caf50; /* Green for positive values */
+}
+
+.negative {
+  color: #f44336; /* Red for negative values */
+}
+
+.fas.fa-caret-up {
+  color: #4caf50;
+}
+
+.fas.fa-caret-down {
+  color: #f44336;
+}

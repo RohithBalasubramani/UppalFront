@@ -1,0 +1,57 @@
+.weather-widget {
+  font-family: "Arial", sans-serif;
+  color: white;
+  background-color: #009ad8;
+  border-radius: 10px;
+  padding: 20px;
+  width: 400px;
+  margin-top: -15vh;
+}
+
+.weather-header > div:first-child {
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.weather-header > div:last-child {
+  font-size: 16px;
+  margin-bottom: 10px;
+}
+
+/* .weather-header-day {
+  font-size: 12px;
+} */
+
+.weather-main {
+  display: flex;
+  font-size: 30px;
+  flex-direction: column;
+  text-align: left;
+  border-top: 1px solid white;
+  border-bottom: 1px solid white;
+  gap: 3px;
+  padding: 2vh;
+}
+
+.weather-main .weather-temp {
+  font-weight: bold;
+  font-size: 50px;
+  text-align: left;
+}
+
+.weather-main .weather-feels-like {
+  font-weight: bold;
+  font-size: 15px;
+  text-align: left;
+  color: #beedffa8;
+  text-transform: capitalize;
+}
+
+.weather-details {
+  padding: 2vh;
+  font-size: 15px;
+  line-height: 1.5;
+  color: #beedffa8;
+}
+
+/* Additional styling for the icons, layout adjustments, etc., can be added here */
