@@ -16,10 +16,10 @@ import OG2 from "./Pages/OG2";
 import AMFDifference from "./Pages/AMFDIff";
 
 const apiEndpoints = {
-  cellltpanel1data: "http://159.89.162.97/pcc1/api/cellltpanel1data/",
-  pcc1incomerdata: "http://159.89.162.97/pcc1/api/pcc1incomerdata/",
-  ups1og1data: "http://159.89.162.97/pcc1/api/ups1og1data/",
-  ups2og1data: "http://159.89.162.97/pcc1/api/ups2og1data/",
+  cellltpanel1data: "https://sneems.org/pcc1/api/cellltpanel1data/",
+  pcc1incomerdata: "https://sneems.org/pcc1/api/pcc1incomerdata/",
+  ups1og1data: "https://sneems.org/pcc1/api/ups1og1data/",
+  ups2og1data: "https://sneems.org/pcc1/api/ups2og1data/",
 };
 
 const endpointArray = Object.entries(apiEndpoints).map(([endpoint, url]) => ({
@@ -28,33 +28,33 @@ const endpointArray = Object.entries(apiEndpoints).map(([endpoint, url]) => ({
 }));
 
 const apiEndpoints2 = {
-  cellltpanel2data: "http://159.89.162.97/pcc1/api/cellltpanel2data/",
-  // celltoolpdb1data: "http://159.89.162.97/pcc1/api/celltoolpdb1data/",
-  pcc2incomerdata: "http://159.89.162.97/pcc1/api/pcc2incomerdata/",
-  ups1og2data: "http://159.89.162.97/pcc1/api/ups1og2data/",
-  ups2og2data: "http://159.89.162.97/pcc1/api/ups2og2data/",
+  cellltpanel2data: "https://sneems.org/pcc1/api/cellltpanel2data/",
+  // celltoolpdb1data: "https://sneems.org/pcc1/api/celltoolpdb1data/",
+  pcc2incomerdata: "https://sneems.org/pcc1/api/pcc2incomerdata/",
+  ups1og2data: "https://sneems.org/pcc1/api/ups1og2data/",
+  ups2og2data: "https://sneems.org/pcc1/api/ups2og2data/",
 };
 
 const apiEndpointsTRFA = {
-  upsincm1data: "http://159.89.162.97/mod1/api/upsincm1data/",
-  upsincm2data: "http://159.89.162.97/mod1/api/upsincm2data/",
-  upsincm3data: "http://159.89.162.97/mod1/api/upsincm3data/",
-  upsincm4data: "http://159.89.162.97/mod1/api/upsincm4data/",
-  upsincm5data: "http://159.89.162.97/mod1/api/upsincm5data/",
-  cellltpanel1data: "http://159.89.162.97/pcc1/api/cellltpanel1data/",
-  chiller2data: "http://159.89.162.97/pcc1/api/chiller2data/",
-  celltoolpdb2data: "http://159.89.162.97/pcc1/api/celltoolpdb2data/",
+  upsincm1data: "https://sneems.org/mod1/api/upsincm1data/",
+  upsincm2data: "https://sneems.org/mod1/api/upsincm2data/",
+  upsincm3data: "https://sneems.org/mod1/api/upsincm3data/",
+  upsincm4data: "https://sneems.org/mod1/api/upsincm4data/",
+  upsincm5data: "https://sneems.org/mod1/api/upsincm5data/",
+  cellltpanel1data: "https://sneems.org/pcc1/api/cellltpanel1data/",
+  chiller2data: "https://sneems.org/pcc1/api/chiller2data/",
+  celltoolpdb2data: "https://sneems.org/pcc1/api/celltoolpdb2data/",
 };
 
 const apiEndpointsTRFB = {
-  ups1incomer1data: "http://159.89.162.97/cell1/api/ups1incomer1data/",
-  ups1incomer2data: "http://159.89.162.97/cell1/api/ups1incomer2data/",
-  ups1incomer3data: "http://159.89.162.97/cell1/api/ups1incomer3data/",
-  ups1incomer4data: "http://159.89.162.97/cell1/api/ups1incomer4data/",
-  ups1incomer5data: "http://159.89.162.97/cell1/api/ups1incomer5data/",
-  ups1ltpanel1data: "http://159.89.162.97/cell1/api/ups1ltpanel1data/",
-  cellltpanel1data: "http://159.89.162.97/cell1/api/cellltpanel1data/",
-  celltoolpdb2data: "http://159.89.162.97/pcc1/api/celltoolpdb2data/",
+  ups1incomer1data: "https://sneems.org/cell1/api/ups1incomer1data/",
+  ups1incomer2data: "https://sneems.org/cell1/api/ups1incomer2data/",
+  ups1incomer3data: "https://sneems.org/cell1/api/ups1incomer3data/",
+  ups1incomer4data: "https://sneems.org/cell1/api/ups1incomer4data/",
+  ups1incomer5data: "https://sneems.org/cell1/api/ups1incomer5data/",
+  ups1ltpanel1data: "https://sneems.org/cell1/api/ups1ltpanel1data/",
+  cellltpanel1data: "https://sneems.org/cell1/api/cellltpanel1data/",
+  celltoolpdb2data: "https://sneems.org/pcc1/api/celltoolpdb2data/",
 };
 
 const endpointArray2 = Object.entries(apiEndpoints2).map(([endpoint, url]) => ({

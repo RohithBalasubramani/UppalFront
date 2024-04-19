@@ -34,7 +34,7 @@ const TRFA = () => {
   const [isLoading, setIsLoading] = useState(false); // State to track loading status
 
   const apiEndpoints = {
-    tf1data: "http://159.89.162.97/api/tf1data/",
+    tf1data: "https://sneems.org/api/tf1data/",
   };
 
   const handleChange = (event, newAlignment) => {

@@ -29,10 +29,10 @@ const OG2 = () => {
   const [isLoading, setIsLoading] = useState(false); // State to track loading status
 
   const apiEndpoints = {
-    // celltoolpdb1data: "http://159.89.162.97/pcc1/api/celltoolpdb1data/",
-    pcc2incomerdata: "http://159.89.162.97/pcc1/api/pcc2incomerdata/",
-    ups1og2data: "http://159.89.162.97/pcc1/api/ups1og2data/",
-    ups2og2data: "http://159.89.162.97/pcc1/api/ups2og2data/",
+    // celltoolpdb1data: "https://sneems.org/pcc1/api/celltoolpdb1data/",
+    pcc2incomerdata: "https://sneems.org/pcc1/api/pcc2incomerdata/",
+    ups1og2data: "https://sneems.org/pcc1/api/ups1og2data/",
+    ups2og2data: "https://sneems.org/pcc1/api/ups2og2data/",
   };
 
   useEffect(() => {

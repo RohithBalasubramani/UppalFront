@@ -33,9 +33,9 @@ const Anomaly = () => {
 
   const apiEndpoints = {
     amf1dailykwhanomalydb:
-      "http://159.89.162.97/anomaly/api/amf1dailykwhanomalydb/",
+      "https://sneems.org/anomaly/api/amf1dailykwhanomalydb/",
     amf2dailykwhanomalydb:
-      "http://159.89.162.97/anomaly/api/amf2dailykwhanomalydb/",
+      "https://sneems.org/anomaly/api/amf2dailykwhanomalydb/",
   };
 
   useEffect(() => {
@@ -58,12 +58,12 @@ const Anomaly = () => {
       // Additional logic to fetch related data based on the selected endpoint
       if (endpoint === "amf1dailykwhanomalydb") {
         const additionalResponse = await axios.get(
-          "http://159.89.162.97/api/amf1dailykwh/"
+          "https://sneems.org/api/amf1dailykwh/"
         );
         setAdditionalData(additionalResponse.data); // Set the additional data state (modify this as per your requirement)
       } else if (endpoint === "amf2dailykwhanomalydb") {
         const additionalResponse = await axios.get(
-          "http://159.89.162.97/api/amf2dailykwh/"
+          "https://sneems.org/api/amf2dailykwh/"
         );
         setAdditionalData(additionalResponse.data); // Set the additional data state (modify this as per your requirement)
       }

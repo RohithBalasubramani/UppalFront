@@ -43,10 +43,10 @@ const DashboardPage = () => {
   const [tablesData, setTablesData] = useState([]);
 
   const apiEndpoints = {
-    tf1data: "http://159.89.162.97/api/tf1data/",
-    tf2data: "http://159.89.162.97/api/tf2data/",
-    tf3data: "http://159.89.162.97/api/tf3data/",
-    tf4data: "http://159.89.162.97/api/tf4data/",
+    tf1data: "https://sneems.org/api/tf1data/",
+    tf2data: "https://sneems.org/api/tf2data/",
+    tf3data: "https://sneems.org/api/tf3data/",
+    tf4data: "https://sneems.org/api/tf4data/",
   };
 
   const backgroundColors = [

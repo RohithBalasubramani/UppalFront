@@ -25,9 +25,9 @@ const AMF = () => {
   const [isLoading, setIsLoading] = useState(false); // State to track loading status
 
   const apiEndpoints = {
-    amf1dailykwh: "http://159.89.162.97/api/amf1dailykwh/",
-    amf2dailykwh: "http://159.89.162.97/api/amf2dailykwh/",
-    amf3daily: "http://159.89.162.97/api/amf3daily/",
+    amf1dailykwh: "https://sneems.org/api/amf1dailykwh/",
+    amf2dailykwh: "https://sneems.org/api/amf2dailykwh/",
+    amf3daily: "https://sneems.org/api/amf3daily/",
   };
 
   useEffect(() => {
