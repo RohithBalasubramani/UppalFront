@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import "./weather.css";
+// import "./weather.css";
 
 const WeatherWidget = () => {
   const [weatherData, setWeatherData] = useState(null);

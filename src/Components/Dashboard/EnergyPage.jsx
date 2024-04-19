@@ -1,5 +1,5 @@
 import React from "react";
-import "./EnergyComp.css"; // Assuming you have a separate CSS file for styling
+// import "public\css\energycomp.css"; // Assuming you have a separate CSS file for styling
 import EnergyMeter from "./Energy"; // Import your EnergyMeter component
 
 const EnergyComp = () => {
