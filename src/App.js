@@ -1,5 +1,8 @@
 /* import logo from './logo.svg'; */
 import "./App.css";
+// import "css/sb-admin-2.min.css";
+// import "css/energycomp.css";
+// import "css/weather.css";
 import React from "react";
 import Dashboard from "./Pages/Dashboard";
 import { HashRouter, Route, Routes } from "react-router-dom";
@@ -14,6 +17,7 @@ import OG1 from "./Pages/OG1";
 import PCC1 from "./Pages/PCC1";
 import OG2 from "./Pages/OG2";
 import AMFDifference from "./Pages/AMFDIff";
+import Feeders from "./Pages/Feeders";
 
 const apiEndpoints = {
   cellltpanel1data: "https://sneems.org/pcc1/api/cellltpanel1data/",
@@ -69,7 +73,7 @@ const App = () => {
         <Route path="/" element={<Dashboard />}>
           <Route path="/" element={<DashboardPage />} />
           <Route path="/amf" element={<AMF />} />
-          <Route
+          {/* <Route
             path="/amfdiff"
             element={
               <AMFDifference
@@ -77,10 +81,67 @@ const App = () => {
                 apiEndpointsb={apiEndpointsTRFA}
               />
             }
-          />
-          <Route path="/indi" element={<Indi />} />
+          /> */}
+          {/* <Route path="/indi" element={<Indi />} /> */}
           <Route path="/anomaly" element={<Anomaly />} />
-          <Route path="/trf1assets" element={<TRFA />} />
+          <Route
+            path="/eb"
+            element={<TRFA source={"eb"} heading={"EB Energy Source"} />}
+          />
+          <Route
+            path="/dg1"
+            element={<TRFA source={"dg1"} heading={"Diesel Generator 1"} />}
+          />
+          <Route
+            path="/dg2"
+            element={<TRFA source={"dg2"} heading={"Diesel Generator 2"} />}
+          />
+
+          <Route
+            path="/skyde"
+            element={<Feeders source={"skyde"} heading={"Skyde"} />}
+          />
+          <Route
+            path="/utility"
+            element={<Feeders source={"utility"} heading={"Utility"} />}
+          />
+          <Route
+            path="/sparestation3"
+            element={
+              <Feeders source={"sparestation3"} heading={"Spare Station 3"} />
+            }
+          />
+          <Route
+            path="/zoho"
+            element={<Feeders source={"zoho"} heading={"Zoho"} />}
+          />
+          <Route
+            path="/sparestation5"
+            element={
+              <Feeders source={"sparestation5"} heading={"Spare Station 5"} />
+            }
+          />
+          <Route
+            path="/sparestation6"
+            element={
+              <Feeders source={"sparestation6"} heading={"Spare Station 6"} />
+            }
+          />
+          <Route
+            path="/sparestation7"
+            element={
+              <Feeders source={"sparestation7"} heading={"Spare Station 7"} />
+            }
+          />
+          <Route
+            path="/kotak"
+            element={<Feeders source={"kotak"} heading={"Kotak"} />}
+          />
+          <Route
+            path="/solar"
+            element={<Feeders source={"solar"} heading={"Solar"} />}
+          />
+
           <Route
             path="/trf1feeders"
             element={<TRFF apiEndpoints={apiEndpointsTRFA} />}
@@ -89,22 +150,22 @@ const App = () => {
             path="/trf1feedersb"
             element={<TRFF apiEndpoints={apiEndpointsTRFB} />}
           />
-          <Route path="/og1" element={<OG1 />} />
-          {endpointArray.map(({ endpoint, url }) => (
+          {/* <Route path="/og1" element={<OG1 />} /> */}
+          {/* {endpointArray.map(({ endpoint, url }) => (
             <Route
               key={endpoint}
               path={`og1/${endpoint}`}
               element={<PCC1 endpoint={endpoint} url={url} />}
             />
-          ))}
-          <Route path="/og2" element={<OG2 />} />
+          ))} */}
+          {/* <Route path="/og2" element={<OG2 />} />
           {endpointArray2.map(({ endpoint, url }) => (
             <Route
               key={endpoint}
               path={`og2/${endpoint}`}
               element={<PCC1 endpoint={endpoint} url={url} />}
             />
-          ))}
+          ))} */}
         </Route>
 
         <Route path="/login" element={<Login />} />

@@ -2,6 +2,8 @@ import React from "react";
 import { Cell, PieChart, Pie, Sector, Text } from "recharts";
 
 const GaugeChart = ({ value, fillColor }) => {
+  value = 20;
+  fillColor = "#54ff1b";
   const data = [
     { name: "Value", value: value },
     { name: "Rest", value: 100 - value },

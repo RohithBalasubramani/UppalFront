@@ -16,7 +16,7 @@ const AI = () => {
           boxShadow: "0px 0px 5px rgba(0, 0, 0, 0.1)",
           padding: "2vh",
           background: "#f9f9f9",
-          marginTop: "2vh",
+          marginTop: "-35vh",
         }}
       />
     </div>

@@ -1,55 +1,82 @@
-import React from "react";
-// import "public\css\energycomp.css"; // Assuming you have a separate CSS file for styling
-import EnergyMeter from "./Energy"; // Import your EnergyMeter component
+import React, { useEffect, useState } from "react";
+import EnergyMeter from "./Energy"; // Import your updated EnergyMeter component
 
-const EnergyComp = () => {
-  // Static values for the demonstration
-  const todayEnergy = {
-    kWh: 2952,
-    percentageChange: 82, // Positive value for increase
+const EnergyComp = ({ data }) => {
+  const [selectedSource, setSelectedSource] = useState("DG1");
+  const [totalEnergyUsed, setTotalEnergyUsed] = useState(0);
+  const [totalCostSaved, setTotalCostSaved] = useState(0);
+  const [percentageChange, setPercentageChange] = useState(-12.5); // Example value for demonstration
+  const [curVal, setCurVal] = useState(0); // Example value for demonstration
+
+  useEffect(() => {
+    if (
+      data &&
+      data["recent data"] &&
+      data["today"] &&
+      data["resampled data"]
+    ) {
+      const today = data["today"];
+      const resample = data["resampled data"];
+      console.log("resample", resample);
+
+      let totalEnergy = 0;
+      let currentValue = 0;
+
+      if (selectedSource === "DG1") {
+        totalEnergy = resample.reduce(
+          (sum, entry) => sum + (entry.DG1S12Reading_kw || 0),
+          0
+        );
+        currentValue = today.DG1S12Reading_kw || 0;
+      } else if (selectedSource === "DG2") {
+        totalEnergy = resample.reduce(
+          (sum, entry) => sum + (entry.DG2S3Reading_kw || 0),
+          0
+        );
+        currentValue = today.DG2S3Reading_kw || 0;
+      } else if (selectedSource === "EB") {
+        totalEnergy = resample.reduce(
+          (sum, entry) => sum + (entry.EBS10Reading_kw || 0),
+          0
+        );
+        currentValue = today.EBS10Reading_kw || 0;
+      }
+
+      const costSaved = totalEnergy * 10; // Calculate cost in ₹
+
+      setCurVal(currentValue);
+      setTotalEnergyUsed(totalEnergy);
+      setTotalCostSaved(costSaved);
+    }
+  }, [selectedSource, data]);
+
+  const handleSourceChange = (event) => {
+    setSelectedSource(event.target.value);
   };
-
-  const monthEnergy = {
-    kWh: 159654,
-    percentageChange: -12.5, // Negative value for decrease
-  };
-
-  const totalEnergySaved = 38500000; // in kWh
-  const totalCostSaved = 1490000; // in dollars
 
   return (
     <>
-      <div className="card shadow mb-">
-        <div className="card-header py-3" style={{ display: "flex" }}>
-          <h6
-            style={{ width: "10vw", display: "flex" }}
-            className="m-0 font-weight-bold text-primary"
-          >
-            Area Chart
-          </h6>
-        </div>
-        <div className="card-body">
+      <div className="card shadow mb-4 h-100">
+        <div>
           <div className="energy-widget-container">
             <div className="energy-stat">
               <h2>Energy Consumption</h2>
               <div className="energy-today">
                 <h4 style={{ color: "#111111" }}>Today</h4>
-                <h5>From 7AM till now</h5>
+                <h5>From 12am till now</h5>
                 <p
                   className={`percentage-change ${
-                    todayEnergy.percentageChange > 0 ? "positive" : "negative"
+                    percentageChange > 0 ? "positive" : "negative"
                   }`}
                 >
                   <i
                     className={`fas fa-caret-${
-                      todayEnergy.percentageChange > 0 ? "up" : "down"
+                      percentageChange > 0 ? "up" : "down"
                     }`}
                   ></i>
-                  {Math.abs(todayEnergy.percentageChange)} % compared to
-                  yesterday
+                  {Math.abs(percentageChange)} % compared to yesterday
                 </p>
-                {/* Include the EnergyMeter component with the value prop */}
-                <EnergyMeter value={todayEnergy.percentageChange} />
+                <EnergyMeter value={curVal} />
                 <p
                   style={{
                     textAlign: "left",
@@ -57,73 +84,55 @@ const EnergyComp = () => {
                     marginLeft: "4vw",
                   }}
                 >
-                  {todayEnergy.kWh.toLocaleString()} kWh
+                  {curVal.toLocaleString()} kWh
                 </p>
               </div>
-              {/* <div className="energy-month">
-          <h3>This month</h3>
-          <h4>Till now</h4>
-          <p>{monthEnergy.kWh.toLocaleString()} kWh</p>
-          <p
-            className={`percentage-change ${
-              monthEnergy.percentageChange > 0 ? "positive" : "negative"
-            }`}
-          >
-            <i
-              className={`fas fa-caret-${
-                monthEnergy.percentageChange > 0 ? "up" : "down"
-              }`}
-            ></i>
-            {Math.abs(monthEnergy.percentageChange)} % compared to previous
-            month
-          </p>
-          {/* Include the EnergyMeter component with the value prop */}
-              {/* <EnergyMeter value={monthEnergy.percentageChange} /> */}
-              {/* </div> */}
             </div>
             <div className="energy-savings">
+              <select
+                value={selectedSource}
+                onChange={handleSourceChange}
+                style={{ width: "5vw", marginRight: "0", marginLeft: "auto" }}
+              >
+                <option value="DG1">DG1</option>
+                <option value="DG2">DG2</option>
+                <option value="EB">EB</option>
+              </select>
               <div className="energy-saved">
-                <h3>Total Energy Saved</h3>
+                <h3>Total Energy Used</h3>
                 <p
                   className={`percentage-change ${
-                    monthEnergy.percentageChange > 0 ? "positive" : "negative"
+                    percentageChange > 0 ? "positive" : "negative"
                   }`}
                 >
                   <i
                     className={`fas fa-caret-${
-                      monthEnergy.percentageChange > 0 ? "up" : "down"
+                      percentageChange > 0 ? "up" : "down"
                     }`}
                   ></i>
-                  {Math.abs(monthEnergy.percentageChange)} % compared to
-                  previous month
+                  {Math.abs(percentageChange)} % compared to previous month
                 </p>
-
-                <p>{totalEnergySaved.toLocaleString()} kWh</p>
-                {/* <EnergyMeter value={totalEnergySaved} maxValue={500000} /> */}
+                <p>{totalEnergyUsed.toLocaleString()} kWh</p>
               </div>
               <div className="cost-saved">
-                <h3>Total Cost Saved</h3>
+                <h3>Total Cost</h3>
                 <p
                   className={`percentage-change ${
-                    monthEnergy.percentageChange > 0 ? "positive" : "negative"
+                    percentageChange > 0 ? "positive" : "negative"
                   }`}
                 >
                   <i
                     className={`fas fa-caret-${
-                      monthEnergy.percentageChange > 0 ? "up" : "down"
+                      percentageChange > 0 ? "up" : "down"
                     }`}
                   ></i>
-                  {Math.abs(monthEnergy.percentageChange)} % compared to
-                  previous month
+                  {Math.abs(percentageChange)} % compared to previous month
                 </p>
                 <p>₹{totalCostSaved.toLocaleString()}</p>
-                {/* <EnergyMeter value={totalCostSaved} maxValue={200000} /> */}
               </div>
             </div>
           </div>
         </div>
-        <hr />
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Ullam, debitis.
       </div>
     </>
   );

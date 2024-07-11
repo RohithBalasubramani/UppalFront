@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import { Bar } from "react-chartjs-2";
 import "chart.js/auto";
 
-const StackedBarChart = ({ data, start_date, end_date }) => {
+const StackedBarDGEB = ({ data }) => {
   const [chartData, setChartData] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -15,14 +14,9 @@ const StackedBarChart = ({ data, start_date, end_date }) => {
 
         // Define the keys to include manually
         const kwKeys = [
-          "Skyd1Reading_kw_eb",
-          "Utility1st2ndFS2Reading_kw_eb",
-          "SpareStation3Reading_kw_eb",
-          "ThirdFloorZohoS4Reading_kw_eb",
-          "SixthFloorS5Reading_kw_eb",
-          "SpareS6Reading_kw_eb",
-          "SpareS7Reading_kw_eb",
-          "ThirdFifthFloorKotakReading_kw_eb",
+          "DG1S12Reading_kw",
+          "EBS10Reading_kw",
+          "DG2S3Reading_kw",
         ];
 
         const timestamps = resampledData.map((item) => {
@@ -71,6 +65,7 @@ const StackedBarChart = ({ data, start_date, end_date }) => {
           <h6 className="m-0 font-weight-bold text-primary">
             Stacked Bar Chart
           </h6>
+          {/* <div>Status:</div> */}
         </div>
         <div className="card-body">
           <Bar
@@ -83,7 +78,7 @@ const StackedBarChart = ({ data, start_date, end_date }) => {
                 },
                 title: {
                   display: true,
-                  text: "Total Energy Consumption Over Time",
+                  text: "Energy Consumption Over Time",
                 },
               },
               scales: {
@@ -102,4 +97,4 @@ const StackedBarChart = ({ data, start_date, end_date }) => {
   );
 };
 
-export default StackedBarChart;
+export default StackedBarDGEB;

@@ -5,10 +5,23 @@ import axios from "axios";
 
 ChartJS.register(...registerables);
 
-const RealTimeChart = () => {
+const RealTimeChart = ({ source }) => {
   const [data, setData] = useState([]);
   const [powerStatus, setPowerStatus] = useState("Loading...");
   const [activeData, setActiveData] = useState([]);
+
+  const getEndpoint = (source) => {
+    switch (source) {
+      case "eb":
+        return "http://117.203.101.153/api/ebs10reading/";
+      case "dg2":
+        return "http://117.203.101.153/api/dg2s3reading/";
+      case "dg1":
+        return "http://117.203.101.153/api/dg1s12reading/";
+      default:
+        throw new Error("Invalid source");
+    }
+  };
 
   const fetchData = async () => {
     const currentTime = new Date().toISOString();
@@ -18,31 +31,22 @@ const RealTimeChart = () => {
       resample_period: "T", // per minute
     };
     try {
-      const [ebResponse, dgResponse, dg1s12Response] = await Promise.all([
-        axios.get("http://117.203.101.153/api/ebs10reading/", { params }),
-        axios.get("http://117.203.101.153/api/dg2s3reading/", { params }),
-        axios.get("http://117.203.101.153/api/dg1s12reading/", { params }),
-      ]);
+      const endpoint = getEndpoint(source);
+      const response = await axios.get(endpoint, { params });
 
-      const ebRecent = ebResponse.data["recent data"];
-      const dgRecent = dgResponse.data["recent data"];
-      const dg1s12Recent = dg1s12Response.data["recent data"];
-      updateChartData(ebRecent, dgRecent, dg1s12Recent);
-      updatePowerStatus(ebRecent, dgRecent, dg1s12Recent);
+      const recentData = response.data["recent data"];
+      updateChartData(recentData);
+      updatePowerStatus(recentData);
     } catch (error) {
       console.error("Error fetching data:", error);
     }
   };
 
-  const updateChartData = (ebRecent, dgRecent, dg1s12Recent) => {
+  const updateChartData = (recentData) => {
     const newEntry = {
-      time: ebRecent.timestamp || dgRecent.timestamp || dg1s12Recent.timestamp,
-      ebKw: ebRecent.kwh,
-      ebCurrent: ebRecent.average_current,
-      dgKw: dgRecent.kwh,
-      dgCurrent: dgRecent.average_current,
-      dg1s12Kw: dg1s12Recent.kwh,
-      dg1s12Current: dg1s12Recent.average_current,
+      time: recentData.timestamp,
+      kwh: recentData.kwh,
+      current: recentData.average_current,
     };
 
     setData((prevData) => {
@@ -53,22 +57,7 @@ const RealTimeChart = () => {
     });
 
     setActiveData((prevData) => {
-      let activeEntry = { time: newEntry.time, kwh: 0 };
-      if (newEntry.ebCurrent > 0) {
-        activeEntry = { time: newEntry.time, kwh: newEntry.ebKw, source: "EB" };
-      } else if (newEntry.dgCurrent > 0) {
-        activeEntry = {
-          time: newEntry.time,
-          kwh: newEntry.dgKw,
-          source: "DG2S3",
-        };
-      } else if (newEntry.dg1s12Current > 0) {
-        activeEntry = {
-          time: newEntry.time,
-          kwh: newEntry.dg1s12Kw,
-          source: "DG1S12",
-        };
-      }
+      const activeEntry = { time: newEntry.time, kwh: newEntry.kwh };
       const updatedActiveData = [...prevData, activeEntry];
       return updatedActiveData.length > 15
         ? updatedActiveData.slice(updatedActiveData.length - 15)
@@ -76,16 +65,8 @@ const RealTimeChart = () => {
     });
   };
 
-  const updatePowerStatus = (ebRecent, dgRecent, dg1s12Recent) => {
-    if (ebRecent.average_current > 0) {
-      setPowerStatus("Running on EB Power");
-    } else if (dgRecent.average_current > 0) {
-      setPowerStatus("Running on Generator Power (DG2S3)");
-    } else if (dg1s12Recent.average_current > 0) {
-      setPowerStatus("Running on Generator Power (DG1S12)");
-    } else {
-      setPowerStatus("No Power");
-    }
+  const updatePowerStatus = (recentData) => {
+    setPowerStatus("Data fetched");
   };
 
   useEffect(() => {
@@ -94,7 +75,7 @@ const RealTimeChart = () => {
     }, 5000); // polling every 5 seconds
 
     return () => clearInterval(interval);
-  }, []);
+  }, [source]);
 
   const chartData = {
     labels: activeData.map((item) => item.time),
@@ -125,9 +106,6 @@ const RealTimeChart = () => {
     scales: {
       x: {
         type: "time",
-        time: {
-          tooltipFormat: "ll HH:mm",
-        },
       },
       y: {
         title: {

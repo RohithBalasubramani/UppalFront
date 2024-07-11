@@ -1,73 +1,42 @@
 import { Gauge, gaugeClasses } from "@mui/x-charts";
-import React from "react";
-//
+import React, { useEffect, useState } from "react";
+import axios from "axios";
 
-const AMFgauge = ({ amf1, amf2 }) => {
-  //   if (!data || Object.keys(data).length === 0) {
-  //     return <div>No data available</div>;
-  //   }
+const AMFgauge = () => {
+  const [ebUsage, setEbUsage] = useState(0);
+  const [dgUsage, setDgUsage] = useState(0);
+  const [ebTot, setEbtot] = useState(0);
+  const [dgTot, setDgTot] = useState(0);
 
-  //   const labels = Object.keys(data);
-  //   const totalSums = labels.map((label) => {
-  //     const endpointData = data[label];
-  //     return endpointData.reduce((sum, item) => sum + item.kw, 0);
-  //   });
+  const fetchData = async () => {
+    try {
+      const [ebResponse, dgResponse1, dgResponse2] = await Promise.all([
+        axios.get("http://117.203.101.153/api/ebs10reading/"),
+        axios.get("http://117.203.101.153/api/dg1s12reading/"),
+        axios.get("http://117.203.101.153/api/dg2s3reading/"),
+      ]);
 
-  //   const datasets = [
-  //     {
-  //       data: totalSums,
-  //       backgroundColor: bgcolor, // Use bgcolor prop for background color
-  //       borderColor: bgcolor,
-  //       borderWidth: 1,
-  //     },
-  //   ];
+      const ebKwh = ebResponse.data["recent data"].kwh;
+      const dg1Kwh = dgResponse1.data["recent data"].kwh;
+      const dg2Kwh = dgResponse2.data["recent data"].kwh;
 
-  //   const chartData = {
-  //     labels: labels,
-  //     datasets: datasets,
-  //   };
+      const totalKwh = ebKwh + dg1Kwh + dg2Kwh;
+      if (totalKwh > 0) {
+        setEbUsage((ebKwh / totalKwh) * 100);
+        setDgUsage(((dg1Kwh + dg2Kwh) / totalKwh) * 100);
+        setDgTot(dg1Kwh + dg2Kwh);
+        setEbtot(ebKwh);
+      }
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
 
-  //   const chartDataRadar = {
-  //     labels: labels,
-  //     datasets: datasets,
-  //   };
-
-  //   const donutChartOptions = {
-  //     aspectRatio: 3,
-  //     responsive: true,
-  //     maintainAspectRatio: false,
-  //     title: {
-  //       display: true,
-  //       text: "Cumulative OG2_kwh",
-  //     },
-  //     animation: {
-  //       animateScale: true,
-  //       animateRotate: true,
-  //     },
-  //   };
-
-  //   const radarChartOptions = {
-  //     aspectRatio: 3,
-  //     responsive: true,
-  //     maintainAspectRatio: false,
-  //     scales: {
-  //       r: {
-  //         suggestedMin: 0,
-  //         ticks: {
-  //           stepSize: 10000000, // Set step size to 100000000 (1cr)
-  //           callback: function (value, index, values) {
-  //             // Convert numeric value to "1cr" to "8cr" format
-  //             return value / 10000000 + "cr";
-  //           },
-  //         },
-  //       },
-  //     },
-  //     plugins: {
-  //       legend: {
-  //         display: false, // Hide labels in radar chart
-  //       },
-  //     },
-  //   };
+  useEffect(() => {
+    fetchData();
+    const interval = setInterval(fetchData, 5000); // Update every 5 seconds
+    return () => clearInterval(interval);
+  }, []);
 
   return (
     <div>
@@ -75,7 +44,8 @@ const AMFgauge = ({ amf1, amf2 }) => {
         <div className="col-lg-6 mb-4" style={{ height: "500px" }}>
           <div className="card shadow mb-4 h-50">
             <div className="card-header py-3">
-              <h6 className="m-0 font-weight-bold text-primary">Donut Chart</h6>
+              <h6 className="m-0 font-weight-bold text-primary">EB Usage</h6>
+              <div>Total: {ebTot} Kwh</div>
             </div>
             <div className="card-body">
               <Gauge
@@ -85,25 +55,24 @@ const AMFgauge = ({ amf1, amf2 }) => {
                 endAngle={130}
                 innerRadius="75%"
                 outerRadius="110%"
-                value={amf1}
+                value={ebUsage}
+                text={({ value }) => `${value.toFixed(2)} ${" %"}`}
                 cornerRadius="50%"
                 sx={(theme) => ({
-                  //   [`& .${gaugeClasses.valueText}`]: {
-                  //     fontSize: 40,
-                  //   },
                   [`& .${gaugeClasses.valueArc}`]: {
                     fill: "#aeff00",
                   },
                 })}
               />
-              <div style={{ textAlign: "center", width: "100%" }}>AMF 1</div>
+              <div style={{ textAlign: "center", width: "100%" }}>EB Usage</div>
             </div>
           </div>
         </div>
         <div className="col-lg-6 mb-4" style={{ height: "500px" }}>
           <div className="card shadow mb-4 h-50">
             <div className="card-header py-3">
-              <h6 className="m-0 font-weight-bold text-primary">Radar Chart</h6>
+              <h6 className="m-0 font-weight-bold text-primary">DG Usage</h6>
+              <div>Total: {dgTot} Kwh</div>
             </div>
             <div className="card-body">
               <Gauge
@@ -114,17 +83,15 @@ const AMFgauge = ({ amf1, amf2 }) => {
                 innerRadius="75%"
                 outerRadius="110%"
                 cornerRadius="50%"
-                value={amf2}
+                value={dgUsage}
+                text={({ value }) => `${value.toFixed(2)} ${" %"}`}
                 sx={(theme) => ({
-                  //   [`& .${gaugeClasses.valueText}`]: {
-                  //     fontSize: 40,
-                  //   },
                   [`& .${gaugeClasses.valueArc}`]: {
                     fill: "#ffd900",
                   },
                 })}
               />
-              <div style={{ textAlign: "center", width: "100%" }}>AMF 2</div>
+              <div style={{ textAlign: "center", width: "100%" }}>DG Usage</div>
             </div>
           </div>
         </div>

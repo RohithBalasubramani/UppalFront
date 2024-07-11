@@ -18,7 +18,6 @@ import {
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import ChartAmf from "../Components/PepplData/ChartAmf";
 import ChartAmfBottom from "../Components/PepplData/BottomCharts";
-import KPI from "../Components/PepplData/KPI";
 import ChartStack from "../Components/TRFF/StackedChart";
 import DonutChart from "../Components/TRFF/Donut";
 import LineChart from "../Components/TRFF/LineChart";
@@ -27,6 +26,12 @@ import HeatmapChart from "../Components/TRFF/Heatmaps";
 import CompositeChart from "../Components/TRFF/Composite";
 import TimeBar from "../Components/TRFF/TimePeriod";
 import DashboardLoader from "../Components/Dashboard/Loading";
+import KPI from "../Components/TRFF/KPI";
+// import Powercut from "../Components/TRFF/PowercutChart";
+import Powpercent from "../Components/TRFF/Powerpercentage";
+import RealTimeChart from "../Components/TRFA/Composite";
+import RealTimeCurrentChart from "../Components/TRFA/CurrentRealtime";
+import RealTimeVoltageChart from "../Components/TRFA/VoltageRealTime";
 
 const TRFF = ({ apiEndpoints }) => {
   const [tablesData, setTablesData] = useState([]);
@@ -194,6 +199,22 @@ const TRFF = ({ apiEndpoints }) => {
           Report
         </a>
       </div>
+      <div>
+        <KPI />
+        {/* <Powerheat /> */}
+        <RealTimeChart source="dg2" />
+
+        <div>
+          <div className="row">
+            <div className="col-lg-6 mb-4" style={{ height: "500px" }}>
+              <RealTimeCurrentChart source="dg2" />
+            </div>
+            <div className="col-lg-6 mb-4" style={{ height: "500px" }}>
+              <RealTimeVoltageChart source="dg2" />
+            </div>
+          </div>
+        </div>
+      </div>
       <div className="d-sm-flex align-items-center justify-content-between mb-4">
         {/* Your UI elements */}
 
@@ -239,12 +260,28 @@ const TRFF = ({ apiEndpoints }) => {
               sx={{}}
             >
               <ToggleButton value="H">Hour</ToggleButton>
+              <ToggleButton value="D">Day</ToggleButton>
               <ToggleButton value="W">Week</ToggleButton>
               <ToggleButton value="M">Month</ToggleButton>
               <ToggleButton value="Q">Quartile</ToggleButton>
             </ToggleButtonGroup>
           </div>
         </div>
+
+        <CompositeChart
+          data={tablesData}
+          setTimeperiod={setTimeperiod}
+          timeperiod={timeperiod}
+        />
+        <div style={{ display: "flex" }}>
+          {/* <Powercut style={{ width: "70%" }} /> */}
+          <Powpercent style={{ width: "30%" }} />
+        </div>
+        <ChartAmfBottom
+          // data={tablesData}
+          setTimeperiod={setTimeperiod}
+          timeperiod={timeperiod}
+        />
         <div className="card-body">
           <ChartStack
             data={tablesData}
@@ -266,11 +303,6 @@ const TRFF = ({ apiEndpoints }) => {
             bgcolor={backgroundColors}
           />
 
-          <CompositeChart
-            data={tablesData}
-            setTimeperiod={setTimeperiod}
-            timeperiod={timeperiod}
-          />
           <HeatmapChart
             data={tablesData}
             setTimeperiod={setTimeperiod}

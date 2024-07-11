@@ -1,15 +1,16 @@
 import React from "react";
 import { Line } from "react-chartjs-2";
+import "chartjs-adapter-moment"; // Ensure to include moment adapter for time scale
 
-const ChartAmfBottom = ({ data }) => {
+const VoltageCurrent = ({ data }) => {
   // Declare chartInstance ref outside of the conditional statement
   const chartInstance = React.useRef(null);
 
-  if (!data || data.length === 0) {
+  if (!data || Object.keys(data).length === 0) {
     return <div>No data available</div>; // or handle this case as needed
   }
 
-  const labels = data.map((item) => item.date_time);
+  const labels = data["resampled data"].map((item) => item.timestamp);
   console.log("Bottom Chart: ", data);
 
   // Voltage chart data
@@ -17,8 +18,8 @@ const ChartAmfBottom = ({ data }) => {
     labels: labels,
     datasets: [
       {
-        label: "Line to Line Voltage",
-        data: data.map((item) => item.ll_vltg),
+        label: "Line Voltage",
+        data: data["resampled data"].map((item) => item.ln_avg_voltage),
         fill: false,
         backgroundColor: "rgba(75,192,192,0.2)",
         borderColor: "rgba(75,192,192,1)",
@@ -33,31 +34,31 @@ const ChartAmfBottom = ({ data }) => {
     datasets: [
       {
         label: "Average Current",
-        data: data.map((item) => item.avg_curr),
+        data: data["resampled data"].map((item) => item.avg_current),
         fill: false,
         backgroundColor: "rgba(255,99,132,0.2)",
         borderColor: "rgba(255,99,132,1)",
         borderWidth: 1,
       },
       {
-        label: "Phase R Current",
-        data: data.map((item) => item.r_curr),
+        label: "Phase 1 Current",
+        data: data["resampled data"].map((item) => item.r_current),
         fill: false,
         backgroundColor: "rgba(54, 162, 235, 0.2)",
         borderColor: "rgba(54, 162, 235, 1)",
         borderWidth: 1,
       },
       {
-        label: "Phase Y Current",
-        data: data.map((item) => item.y_curr),
+        label: "Phase 2 Current",
+        data: data["resampled data"].map((item) => item.y_current),
         fill: false,
         backgroundColor: "rgba(255, 206, 86, 0.2)",
         borderColor: "rgba(255, 206, 86, 1)",
         borderWidth: 1,
       },
       {
-        label: "Phase B Current",
-        data: data.map((item) => item.b_curr),
+        label: "Phase 3 Current",
+        data: data["resampled data"].map((item) => item.b_current),
         fill: false,
         backgroundColor: "rgba(75, 192, 192, 0.2)",
         borderColor: "rgba(75, 192, 192, 1)",
@@ -66,12 +67,18 @@ const ChartAmfBottom = ({ data }) => {
     ],
   };
 
-  // Options for charts
-  // Options for charts
   const options = {
     scales: {
       x: {
         type: "time",
+        time: {
+          unit: "hour",
+          tooltipFormat: "ll HH:mm", // Correct format string
+        },
+        title: {
+          display: true,
+          text: "Timestamp",
+        },
       },
       y: {
         title: {
@@ -82,18 +89,18 @@ const ChartAmfBottom = ({ data }) => {
       },
     },
     events: ["click"],
-    onClick: (evt, element, chartInstance) => {
+    onClick: (evt, element, chart) => {
       if (!element.length) return; // If no label is clicked, return
 
       const clickedDatasetIndex = element[0].datasetIndex;
 
       // Show only the clicked dataset and hide others
-      chartInstance.data.datasets.forEach((dataset, index) => {
+      chart.data.datasets.forEach((dataset, index) => {
         dataset.hidden = index !== clickedDatasetIndex;
       });
 
       // Update the chart with modified data
-      chartInstance.update();
+      chart.update();
     },
   };
 
@@ -138,4 +145,4 @@ const ChartAmfBottom = ({ data }) => {
   );
 };
 
-export default ChartAmfBottom;
+export default VoltageCurrent;

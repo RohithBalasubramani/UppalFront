@@ -16,31 +16,31 @@ const TimeBar = ({ dateRange, setStartDate, setDateRange, setEndDate }) => {
     const today = dayjs();
     switch (range) {
       case "today":
-        setStartDate(today);
+        setStartDate(today.startOf("day"));
         setEndDate(today);
         break;
       case "lastWeek":
-        setStartDate(today.subtract(7, "day"));
+        setStartDate(today.subtract(7, "day").startOf("day"));
         setEndDate(today);
         break;
       case "lastMonth":
-        setStartDate(today.subtract(1, "month"));
+        setStartDate(today.subtract(1, "month").startOf("day"));
         setEndDate(today);
         break;
       case "lastYear":
-        setStartDate(today.subtract(1, "year"));
+        setStartDate(today.subtract(1, "year").startOf("day"));
         setEndDate(today);
         break;
       default:
-        setStartDate(undefined);
-        setEndDate(undefined);
+        setStartDate(today.startOf("day"));
+        setEndDate(today);
         break;
     }
   };
 
   return (
-    <div className="container-fluid">
-      <FormControl component="fieldset">
+    <div>
+      <FormControl component="fieldset" sx={{ display: "flex" }}>
         <FormLabel component="legend">Select Date Range</FormLabel>
         <RadioGroup
           row

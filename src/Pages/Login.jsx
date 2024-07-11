@@ -5,7 +5,7 @@ const Login = () => {
   return (
     <div style={{ marginTop: "10vh" }}>
       <div>
-        <title>SB Admin 2 - Login</title>
+        <title>Therion Admin - Login</title>
       </div>
 
       <div class="container">
@@ -21,7 +21,7 @@ const Login = () => {
                     <div class="p-5">
                       <div class="text-center">
                         <h1 class="h4 text-gray-900 mb-4">
-                          Login To Premier Dashboard
+                          Login To M<sup>2</sup> Dashboard
                         </h1>
                       </div>
                       <form class="user">

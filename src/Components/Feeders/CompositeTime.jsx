@@ -16,9 +16,9 @@ const CompositeChart = ({ data }) => {
     return <div>No resampled data available</div>;
   }
 
-  // Calculating average kw
+  // Calculating average kwh_eb
   const average =
-    resampledData.reduce((sum, item) => sum + item.kw, 0) /
+    resampledData.reduce((sum, item) => sum + item.kwh_eb, 0) /
     resampledData.length;
 
   const chartData = {
@@ -26,18 +26,18 @@ const CompositeChart = ({ data }) => {
     datasets: [
       {
         type: "line",
-        label: "Total KW",
-        data: resampledData.map((item) => item.kw),
+        label: "Total kWh",
+        data: resampledData.map((item) => item.kwh_eb),
         fill: true,
         borderColor: "rgba(75,192,192,1)",
         borderWidth: 1,
       },
       {
         type: "bar",
-        label: "Total KW (Bar Chart)",
-        data: resampledData.map((item) => item.kw),
+        label: "Total kWh (Bar Chart)",
+        data: resampledData.map((item) => item.kwh_eb),
         backgroundColor: resampledData.map((item) =>
-          item.kw > average
+          item.kwh_eb > average
             ? "rgba(255, 99, 132, 0.7)"
             : "rgba(75, 192, 192, 0.7)"
         ),
@@ -62,7 +62,7 @@ const CompositeChart = ({ data }) => {
       y: {
         title: {
           display: true,
-          text: "Total KW",
+          text: "Total kWh",
         },
       },
     },

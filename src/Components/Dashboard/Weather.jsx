@@ -47,7 +47,7 @@ const WeatherWidget = () => {
   return (
     <div className="weather-widget">
       <div className="weather-header">
-        <div>Premier Site</div>
+        <div>M Square Tech</div>
         <div
           style={{
             background: "#ffffff",
@@ -58,7 +58,7 @@ const WeatherWidget = () => {
             fontSize: "12px",
           }}
         >
-          Maheshwaram Mandal, Raviryala Village, Ranga Reddy District, 501359,
+          Uppal Industrial Area, Opposite to Uppal Stadium, Uppal, 500039,
           Telangana, India.
         </div>
         <div className="weather-header-day">

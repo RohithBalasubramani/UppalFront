@@ -7,18 +7,23 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import DataTable from "../Components/Table";
 
 import DashboardLoader from "../Components/Dashboard/Loading";
-import RealTimeChart from "../Components/TRFA/Composite";
-import RealTimeCurrentChart from "../Components/TRFA/CurrentRealtime";
-import RealTimeVoltageChart from "../Components/TRFA/VoltageRealTime";
+// import RealTimeChart from "../Components/TRFA/Composite";
+// import RealTimeCurrentChart from "../Components/TRFA/CurrentRealtime";
+// import RealTimeVoltageChart from "../Components/TRFA/VoltageRealTime";
 import TimeBar from "../Components/TRFF/TimePeriod";
-import CompositeChart from "../Components/TRFF/Composite";
-import VoltageCurrent from "../Components/TRFA/BottomCharts";
+// import CompositeChart from "../Components/TRFF/Composite";
+// import VoltageCurrent from "../Components/TRFA/BottomCharts";
 import Powercut from "../Components/TRFA/Powercut";
 import ChartAmf from "../Components/PepplData/ChartAmf";
 import ChartAmfBottom from "../Components/PepplData/BottomCharts";
-import KPI from "../Components/TRFF/KPI";
+import RealTimeCurrentChart from "../Components/Feeders/RealtimeCurrent";
+import RealTimeChart from "../Components/Feeders/Composite";
+import RealTimeVoltageChart from "../Components/Feeders/RealtimeVoltage";
+import KPI from "../Components/Feeders/KPI";
+import CompositeChart from "../Components/Feeders/CompositeTime";
+import VoltageCurrent from "../Components/Feeders/BottomCharts";
 
-const TRFA = ({ source, heading }) => {
+const Feeders = ({ source, heading }) => {
   const [selectedEndpoint, setSelectedEndpoint] = useState(heading);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
@@ -31,12 +36,24 @@ const TRFA = ({ source, heading }) => {
 
   const getEndpoint = (source) => {
     switch (source) {
-      case "eb":
-        return "http://117.203.101.153/api/ebs10reading/";
-      case "dg1":
-        return "http://117.203.101.153/api/dg1s12reading/";
-      case "dg2":
-        return "http://117.203.101.153/api/dg2s3reading/";
+      case "skyde":
+        return "http://117.203.101.153/api/skyd1reading/";
+      case "utility":
+        return "http://117.203.101.153/api/utility1st2ndfs2reading/";
+      case "sparestation3":
+        return "http://117.203.101.153/api/sparestation3reading/";
+      case "zoho":
+        return "http://117.203.101.153/api/thirdfloorzohos4reading/";
+      case "sparestation5":
+        return "http://117.203.101.153/api/sixthfloors5reading/";
+      case "sparestation6":
+        return "http://117.203.101.153/api/spares6reading/";
+      case "sparestation7":
+        return "http://117.203.101.153/api/spares7reading/";
+      case "kotak":
+        return "http://117.203.101.153/api/thirdfifthfloorkotakreading/";
+      case "solar":
+        return "http://117.203.101.153/api/solars13reading/";
       default:
         throw new Error("Invalid source");
     }
@@ -204,4 +221,4 @@ const TRFA = ({ source, heading }) => {
   );
 };
 
-export default TRFA;
+export default Feeders;

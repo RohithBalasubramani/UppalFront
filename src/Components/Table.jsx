@@ -23,6 +23,11 @@ const DataTable = ({
   handleChangeRowsPerPage,
   selectedEndpoint,
 }) => {
+  // Handling cases where tablesData might not be available or empty
+  if (!tablesData || tablesData.length === 0) {
+    return <div>No data available</div>;
+  }
+
   return (
     <TableContainer component={Paper} className="card shadow mb-4">
       <div className="card-header py-3">
@@ -39,22 +44,21 @@ const DataTable = ({
             className="table table-bordered"
             id="dataTable"
             width="100%"
-            cellspacing="0"
+            cellSpacing="0"
           >
             <TableHead>
               <TableRow>
-                {tablesData.length > 0 &&
-                  Object.keys(tablesData[0]).map((header) => (
-                    <TableCell key={header}>
-                      <TableSortLabel
-                        active={orderBy === header}
-                        direction={orderBy === header ? order : "asc"}
-                        onClick={() => handleRequestSort(header)}
-                      >
-                        {header}
-                      </TableSortLabel>
-                    </TableCell>
-                  ))}
+                {Object.keys(tablesData[0]).map((header) => (
+                  <TableCell key={header}>
+                    <TableSortLabel
+                      active={orderBy === header}
+                      direction={orderBy === header ? order : "asc"}
+                      onClick={() => handleRequestSort(header)}
+                    >
+                      {header}
+                    </TableSortLabel>
+                  </TableCell>
+                ))}
               </TableRow>
             </TableHead>
             <TableBody>
@@ -64,8 +68,8 @@ const DataTable = ({
                   <TableRow key={rowIndex}>
                     {Object.entries(row).map(([key, value], cellIndex) => (
                       <TableCell key={cellIndex}>
-                        {/* Check if it's the first column to apply date-time formatting */}
-                        {cellIndex === 0
+                        {/* Format the timestamp value in the first column */}
+                        {key === "timestamp"
                           ? new Date(value).toLocaleString()
                           : value}
                       </TableCell>

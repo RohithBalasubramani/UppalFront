@@ -257,7 +257,7 @@ const Topbar = () => {
               aria-expanded="false"
             >
               <span class="mr-2 d-none d-lg-inline text-gray-600 small">
-                Premier Admin
+                M<sup>2</sup> Admin
               </span>
               <img
                 class="img-profile rounded-circle"
