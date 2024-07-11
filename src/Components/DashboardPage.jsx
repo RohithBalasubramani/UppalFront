@@ -46,7 +46,7 @@ const DashboardPage = () => {
   const fetchData = async () => {
     setIsLoading(true);
     try {
-      const endpoint = "http://117.203.101.153/analytics/api/timeserieslog/";
+      const endpoint = "https://www.therion.co.in/analytics/api/timeserieslog/";
       const response = await axios.get(endpoint, {
         params: {
           start_date_time: startDate

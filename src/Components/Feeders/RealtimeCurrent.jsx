@@ -9,23 +9,23 @@ const RealTimeCurrentChart = ({ source }) => {
   const getEndpoint = (source) => {
     switch (source) {
       case "skyde":
-        return "http://117.203.101.153/api/skyd1reading/";
+        return "https://www.therion.co.in/api/skyd1reading/";
       case "utility":
-        return "http://117.203.101.153/api/utility1st2ndfs2reading/";
+        return "https://www.therion.co.in/api/utility1st2ndfs2reading/";
       case "sparestation3":
-        return "http://117.203.101.153/api/sparestation3reading/";
+        return "https://www.therion.co.in/api/sparestation3reading/";
       case "zoho":
-        return "http://117.203.101.153/api/thirdfloorzohos4reading/";
+        return "https://www.therion.co.in/api/thirdfloorzohos4reading/";
       case "sparestation5":
-        return "http://117.203.101.153/api/sixthfloors5reading/";
+        return "https://www.therion.co.in/api/sixthfloors5reading/";
       case "sparestation6":
-        return "http://117.203.101.153/api/spares6reading/";
+        return "https://www.therion.co.in/api/spares6reading/";
       case "sparestation7":
-        return "http://117.203.101.153/api/spares7reading/";
+        return "https://www.therion.co.in/api/spares7reading/";
       case "kotak":
-        return "http://117.203.101.153/api/thirdfifthfloorkotakreading/";
+        return "https://www.therion.co.in/api/thirdfifthfloorkotakreading/";
       case "solar":
-        return "http://117.203.101.153/api/solars13reading/";
+        return "https://www.therion.co.in/api/solars13reading/";
       default:
         throw new Error("Invalid source");
     }

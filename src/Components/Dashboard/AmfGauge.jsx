@@ -11,9 +11,9 @@ const AMFgauge = () => {
   const fetchData = async () => {
     try {
       const [ebResponse, dgResponse1, dgResponse2] = await Promise.all([
-        axios.get("http://117.203.101.153/api/ebs10reading/"),
-        axios.get("http://117.203.101.153/api/dg1s12reading/"),
-        axios.get("http://117.203.101.153/api/dg2s3reading/"),
+        axios.get("https://www.therion.co.in/api/ebs10reading/"),
+        axios.get("https://www.therion.co.in/api/dg1s12reading/"),
+        axios.get("https://www.therion.co.in/api/dg2s3reading/"),
       ]);
 
       const ebKwh = ebResponse.data["recent data"].kwh;

@@ -30,7 +30,7 @@ const BottomTimeSeries = () => {
       const fetchData = async () => {
         try {
           const response = await fetch(
-            `http://117.203.101.153/analytics/api/timeserieslog/?start_date_time=${startDate.toISOString()}&end_date_time=${endDate.toISOString()}&resample_period=${timeperiod}`
+            `https://www.therion.co.in/analytics/api/timeserieslog/?start_date_time=${startDate.toISOString()}&end_date_time=${endDate.toISOString()}&resample_period=${timeperiod}`
           );
           const result = await response.json();
           setData(result);

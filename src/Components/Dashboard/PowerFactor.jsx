@@ -16,7 +16,7 @@ const PowerFactorGauge = () => {
   const fetchPowerFactor = async () => {
     try {
       const response = await axios.get(
-        "http://117.203.101.153/api/ebs10reading/"
+        "https://www.therion.co.in/api/ebs10reading/"
       );
       const powerFactorValue = response.data["recent data"].power_factor;
       setPowerFactor(powerFactorValue);

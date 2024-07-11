@@ -32,11 +32,11 @@ const TRFA = ({ source, heading }) => {
   const getEndpoint = (source) => {
     switch (source) {
       case "eb":
-        return "http://117.203.101.153/api/ebs10reading/";
+        return "https://www.therion.co.in/api/ebs10reading/";
       case "dg1":
-        return "http://117.203.101.153/api/dg1s12reading/";
+        return "https://www.therion.co.in/api/dg1s12reading/";
       case "dg2":
-        return "http://117.203.101.153/api/dg2s3reading/";
+        return "https://www.therion.co.in/api/dg2s3reading/";
       default:
         throw new Error("Invalid source");
     }

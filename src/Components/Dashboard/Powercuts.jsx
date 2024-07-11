@@ -108,7 +108,7 @@ const Powercut = ({ startDate, endDate, timeperiod }) => {
     setIsLoading(true);
     try {
       const response = await axios.get(
-        "http://117.203.101.153/api/ebs10reading/",
+        "https://www.therion.co.in/api/ebs10reading/",
         {
           params: {
             start_date_time: startDate

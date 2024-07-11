@@ -1,5 +1,5 @@
 {
-  "homepage": "https://RohithBalasubramani.github.io/EMSFront",
+  "homepage": "http://RohithBalasubramani.github.io/UppalFront",
   "name": "frontend",
   "version": "0.1.0",
   "private": true,
@@ -23,6 +23,7 @@
     "chartjs-plugin-datalabels": "^2.2.0",
     "date-fns": "^3.6.0",
     "dayjs": "^1.11.10",
+    "gh-pages": "^6.1.1",
     "highcharts": "^11.4.1",
     "highcharts-react-official": "^3.2.1",
     "html2canvas": "^1.4.1",
@@ -42,7 +43,7 @@
   },
   "scripts": {
     "predeploy": "npm run build",
-    "deploy": "gh-pages -d build",
+    "deploy": "gh-pages -b master -d build",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",

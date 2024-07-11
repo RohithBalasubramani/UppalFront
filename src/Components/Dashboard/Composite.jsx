@@ -19,9 +19,9 @@ const RealTimeChart = () => {
     };
     try {
       const [ebResponse, dgResponse, dg1s12Response] = await Promise.all([
-        axios.get("http://117.203.101.153/api/ebs10reading/", { params }),
-        axios.get("http://117.203.101.153/api/dg2s3reading/", { params }),
-        axios.get("http://117.203.101.153/api/dg1s12reading/", { params }),
+        axios.get("https://www.therion.co.in/api/ebs10reading/", { params }),
+        axios.get("https://www.therion.co.in/api/dg2s3reading/", { params }),
+        axios.get("https://www.therion.co.in/api/dg1s12reading/", { params }),
       ]);
 
       const ebRecent = ebResponse.data["recent data"];
