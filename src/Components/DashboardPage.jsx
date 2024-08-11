@@ -17,10 +17,16 @@ import styled from "styled-components";
 import AMFgauge from "./Dashboard/AmfGauge";
 import RealTimeVoltageChart from "./Dashboard/VoltageChart";
 import BottomTimeSeries from "./Dashboard/TimeseriesDash";
+import { ReactComponent as DownloadIcon } from "../Assets/reporticon.svg";
+import ReportModal from "./Dashboard/Reports";
+// Import the modal component
 
-const ContCurrent = styled.div`
-  width: 100%;
+const RealTime = styled.div`
   display: flex;
+  flex-direction: column;
+  gap: 3vh;
+  margin-top: 3vh;
+  margin-bottom: 3vh;
 `;
 
 const CurDiv = styled.div`
@@ -38,6 +44,8 @@ const DashboardPage = () => {
   const [isLoading, setIsLoading] = useState(false); // State to track loading status
   const [tablesData, setTablesData] = useState([]);
   const [data, setData] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false); // State to control modal visibility
+  const [dateRange, setDateRange] = useState("today");
 
   useEffect(() => {
     fetchData();
@@ -46,18 +54,26 @@ const DashboardPage = () => {
   const fetchData = async () => {
     setIsLoading(true);
     try {
+      // Get current date
+      const today = new Date();
+
+      // Set start date to the first day of the current month
+      const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+
+      // Set start and end dates in ISO format
+      const startDateISO = startOfMonth.toISOString();
+      const endDateISO = today.toISOString();
+
+      // Use dynamic dates for API request
       const endpoint = "https://www.therion.co.in/analytics/api/timeserieslog/";
       const response = await axios.get(endpoint, {
         params: {
-          start_date_time: startDate
-            ? startDate.toISOString()
-            : "2024-07-07T14:00:00",
-          end_date_time: endDate
-            ? endDate.toISOString()
-            : "2024-07-07T14:10:00",
+          start_date_time: startDateISO,
+          end_date_time: endDateISO,
           resample_period: timeperiod,
         },
       });
+
       setData(response.data);
     } catch (error) {
       console.error("Error fetching data:", error);
@@ -79,6 +95,19 @@ const DashboardPage = () => {
     pdf.save("download.pdf");
   };
 
+  const handleGenerateReportClick = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleModalClose = () => {
+    setIsModalOpen(false);
+  };
+
+  const handleModalSubmit = (reportData) => {
+    // Handle the report data (dataType, format, range) as needed
+    console.log(reportData);
+  };
+
   if (isLoading) {
     return (
       <div>
@@ -92,66 +121,70 @@ const DashboardPage = () => {
       <div className="container-fluid">
         {/* Page Heading */}
         <div className="d-sm-flex align-items-center justify-content-between mb-4">
-          <h1 className="h3 mb-0 text-gray-800">Dashboard</h1>
-          <a
-            onClick={handleDownloadPdf}
-            className="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"
-          >
-            <i className="fas fa-download fa-sm text-white-50"></i> Generate
-            Report
-          </a>
+          <div className="emstit">
+            <span className="emstitle">Dashboard</span>
+            <span className="emsspan">Overview of Building Energy Usage</span>
+          </div>
+          <button onClick={handleGenerateReportClick} className="emsbutton">
+            <i className="emsbuttonicon">
+              <DownloadIcon />
+            </i>
+            <span>Generate Report</span>
+          </button>
         </div>
         <div className="report">
           {/* Content Row */}
-          <KPI data={data} />
 
-          {/* Content Row */}
-          <CompositeChart />
-
-          <div>
-            <div className="row">
-              <div className="col-lg-8 mb-4" style={{ height: "500px" }}>
-                <RealTimeCurrentChart />
+          <div className="row">
+            <div className="col-lg-8 mb-4">
+              <div>
+                <KPI data={data} />
+                <AMFgauge />
               </div>
-              <div className="col-lg-4 mb-4" style={{ height: "500px" }}>
-                <PowerFactorGauge />
+            </div>
+            <div className="col-lg-4 mb-4">
+              <div>
+                <WeatherWidget />
               </div>
             </div>
           </div>
 
-          <div>
-            <div className="row">
-              <div className="col-lg-4 mb-4" style={{ height: "500px" }}>
-                <div>
-                  <AMFgauge />
-                  <AI />
-                </div>
-              </div>
-              <div className="col-lg-8 mb-4" style={{ height: "500px" }}>
-                <RealTimeVoltageChart />
-              </div>
-            </div>
+          {/* Content Row */}
+          <div className="emstit">
+            <span className="emstitle">Real - Time Consumption</span>
+            <span className="emsspan">Status: Running EB power</span>
+          </div>
+          <div className="realtimeflex">
+            <CompositeChart />
+            <RealTimeCurrentChart />
+            <RealTimeVoltageChart />
+          </div>
+          <div className="emstit">
+            <span className="emstitle">Energy Consumption History</span>
+            <span className="emsspan">
+              Access and analyze historical energy consumption trends to
+              identify patterns and areas for improvement.
+            </span>
           </div>
 
           <BottomTimeSeries />
-
-          <div className="row">
-            <div className="col-xl-8">
-              <div>
-                {/* Uncomment and update the following lines if needed */}
-                {/* <ChartStack
-                  data={tablesData}
-                  setTimeperiod={setTimeperiod}
-                  timeperiod={timeperiod}
-                  bgcolor={backgroundColors}
-                /> */}
-              </div>
-            </div>
-          </div>
-
-          <div className="row">{/* Content Column */}</div>
         </div>
       </div>
+      <ReportModal
+        open={isModalOpen}
+        onClose={handleModalClose}
+        onSubmit={handleModalSubmit}
+        startDate={startDate}
+        setStartDate={setStartDate}
+        endDate={endDate}
+        setEndDate={setEndDate}
+        timeperiod={timeperiod}
+        setTimeperiod={setTimeperiod}
+        dateRange={dateRange}
+        setDateRange={setDateRange}
+        data={data}
+        filename="datatable.xlsx"
+      />
     </div>
   );
 };

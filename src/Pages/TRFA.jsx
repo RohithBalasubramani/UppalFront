@@ -17,16 +17,18 @@ import Powercut from "../Components/TRFA/Powercut";
 import ChartAmf from "../Components/PepplData/ChartAmf";
 import ChartAmfBottom from "../Components/PepplData/BottomCharts";
 import KPI from "../Components/TRFF/KPI";
+import dayjs from "dayjs";
+import ExportToExcelButton from "../Components/export2excel";
 
 const TRFA = ({ source, heading }) => {
   const [selectedEndpoint, setSelectedEndpoint] = useState(heading);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
-  const [startDate, setStartDate] = useState(null);
-  const [endDate, setEndDate] = useState(null);
+  const [startDate, setStartDate] = useState(dayjs().startOf("day"));
+  const [endDate, setEndDate] = useState(dayjs());
   const [timeperiod, setTimeperiod] = useState("H");
   const [isLoading, setIsLoading] = useState(false);
-  const [dateRange, setDateRange] = useState("all");
+  const [dateRange, setDateRange] = useState("today");
   const [data, setData] = useState(null);
 
   const getEndpoint = (source) => {
@@ -41,6 +43,17 @@ const TRFA = ({ source, heading }) => {
         throw new Error("Invalid source");
     }
   };
+
+  const backgroundColors = [
+    "rgba(255, 99, 132, 0.6)",
+    "rgba(54, 162, 235, 0.6)",
+    "rgba(255, 206, 86, 0.6)",
+    "rgba(75, 192, 192, 0.6)",
+    "rgba(153, 102, 255, 0.6)",
+    "rgba(255, 159, 64, 0.6)",
+    "rgba(201, 203, 207, 0.6)",
+    "rgba(0, 123, 255, 0.6)",
+  ];
 
   const handleChange = (event, newAlignment) => {
     setTimeperiod(newAlignment);
@@ -83,89 +96,74 @@ const TRFA = ({ source, heading }) => {
   return (
     <div className="container-fluid">
       <div className="d-sm-flex align-items-center justify-content-between mb-4">
-        <h1
-          className="h3 mb-0 text-gray-800"
-          style={{ textTransform: "capitalize" }}
-        >
-          {heading}
-        </h1>
-        <a
-          href="#"
-          className="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"
-        >
-          <i className="fas fa-download fa-sm text-white-50"></i> Generate
-          Report
+        <div className="emstit">
+          <span className="emstitle">{source} Source</span>
+          <span className="emsspan">Overview of {source} Energy Usage</span>
+        </div>
+
+        <a className="d-none d-sm-inline-block">
+          <ExportToExcelButton
+            data={data}
+            filename="table_report.xlsx"
+            startDatetime={startDate}
+            endDatetime={endDate}
+          />
         </a>
       </div>
 
       <KPI data={data} />
-      <RealTimeChart source={source} />
 
-      <div>
+      <div className="emstit">
+        <span className="emstitle">Real - Time Consumption</span>
+        <span className="emsspan">Status: Running EB power</span>
+      </div>
+
+      <div className="realtimeflex">
+        <RealTimeChart source={source} />
+        <RealTimeCurrentChart source={source} />
+        <RealTimeVoltageChart source={source} />
+      </div>
+
+      {/* <div>
         <div className="row">
-          <div className="col-lg-6 mb-4" style={{ height: "500px" }}>
-            <RealTimeCurrentChart source={source} />
-          </div>
-          <div className="col-lg-6 mb-4" style={{ height: "500px" }}>
-            <RealTimeVoltageChart source={source} />
-          </div>
+          <div className="col-lg-6 mb-4" style={{ height: "500px" }}></div>
+          <div className="col-lg-6 mb-4" style={{ height: "500px" }}></div>
         </div>
+      </div> */}
+      <div className="emstit">
+        <span className="emstitle">Energy Consumption History</span>
+        <span className="emsspan">
+          Access and analyze historical energy consumption trends to identify
+          patterns and areas for improvement.
+        </span>
       </div>
 
-      <div className="d-sm-flex align-items-center justify-content-between mb-4">
-        <LocalizationProvider dateAdapter={AdapterDayjs}>
-          <MobileDateTimePicker
-            orientation="landscape"
-            label="Start Date-Time"
-            value={startDate}
-            onChange={(newValue) => setStartDate(newValue)}
-          />
-          <MobileDateTimePicker
-            orientation="landscape"
-            label="End Date-Time"
-            value={endDate}
-            onChange={(newValue) => setEndDate(newValue)}
-          />
-        </LocalizationProvider>
-      </div>
-
-      <TimeBar
+      <CompositeChart
+        data={data}
+        startDate={startDate}
         setStartDate={setStartDate}
+        endDate={endDate}
         setEndDate={setEndDate}
+        timeperiod={timeperiod}
+        setTimeperiod={setTimeperiod}
         dateRange={dateRange}
         setDateRange={setDateRange}
+        backgroundColors={backgroundColors}
       />
-
-      <div className="card shadow mb-4">
-        <div className="card-header py-3" style={{ display: "flex" }}>
-          <h6
-            style={{ width: "10vw", display: "flex" }}
-            className="m-0 font-weight-bold text-primary"
-          >
-            Area Chart
-          </h6>
-          <div style={{ marginRight: "1vw", marginLeft: "auto" }}>
-            <ToggleButtonGroup
-              color="primary"
-              value={timeperiod}
-              exclusive
-              onChange={handleChange}
-              aria-label="Platform"
-            >
-              <ToggleButton value="H">Hour</ToggleButton>
-              <ToggleButton value="D">Day</ToggleButton>
-              <ToggleButton value="W">Week</ToggleButton>
-              <ToggleButton value="M">Month</ToggleButton>
-              <ToggleButton value="Q">Quartile</ToggleButton>
-            </ToggleButtonGroup>
-          </div>
-        </div>
-
-        <div className="card-body">
-          <CompositeChart data={data} />
-          <VoltageCurrent data={data} />
-          <Powercut data={data} />
-          {/* <ChartAmf
+      <VoltageCurrent
+        data={data}
+        startDate={startDate}
+        setStartDate={setStartDate}
+        endDate={endDate}
+        setEndDate={setEndDate}
+        timeperiod={timeperiod}
+        setTimeperiod={setTimeperiod}
+        dateRange={dateRange}
+        setDateRange={setDateRange}
+        backgroundColors={backgroundColors}
+      />
+      {/* <Powercut data={data} /> */}
+      {/* <ChartAmf
             data={data?.results || []}
             setTimeperiod={setTimeperiod}
             timeperiod={timeperiod}
@@ -175,28 +173,27 @@ const TRFA = ({ source, heading }) => {
             setTimeperiod={setTimeperiod}
             timeperiod={timeperiod}
           /> */}
-          <hr />
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Ullam,
-          debitis.
-        </div>
-      </div>
 
       <div style={{ marginTop: "5vh" }}>
         {data && (
           <DataTable
-            tablesData={data["resampled data"]}
+            tablesData={data["resampled data"]} // Pass the correct data subset
             orderBy=""
             order="asc"
             handleRequestSort={() => {}}
-            sortedData={data["resampled data"]}
-            page={page}
-            rowsPerPage={rowsPerPage}
-            handleChangePage={(event, newPage) => setPage(newPage)}
-            handleChangeRowsPerPage={(event) => {
-              setRowsPerPage(parseInt(event.target.value, 10));
-              setPage(0);
-            }}
-            selectedEndpoint={selectedEndpoint}
+            sortedData={data["resampled data"]} // Ensure sorted data is correct
+            rowsPerPage={10}
+            handleChangePage={() => {}}
+            handleChangeRowsPerPage={() => {}}
+            selectedEndpoint="Your API Endpoint"
+            startDate={startDate}
+            setStartDate={setStartDate}
+            endDate={endDate}
+            setEndDate={setEndDate}
+            timeperiod={timeperiod}
+            setTimeperiod={setTimeperiod}
+            dateRange={dateRange}
+            setDateRange={setDateRange}
           />
         )}
       </div>

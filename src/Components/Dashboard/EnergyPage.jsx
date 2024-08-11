@@ -1,12 +1,41 @@
 import React, { useEffect, useState } from "react";
 import EnergyMeter from "./Energy"; // Import your updated EnergyMeter component
+import TimeDrop from "./Timedrop"; // Import the TimeDrop component
+import {
+  Radio,
+  RadioGroup,
+  FormControlLabel,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Button,
+  TextField,
+  IconButton,
+} from "@mui/material";
+import dayjs from "dayjs";
+import "./EnergyComp.css"; // Import the CSS file
+import { BorderColorOutlined } from "@mui/icons-material";
 
-const EnergyComp = ({ data }) => {
-  const [selectedSource, setSelectedSource] = useState("DG1");
+const EnergyComp = ({
+  data,
+  dateRange,
+  setDateRange,
+  startDate,
+  setStartDate,
+  endDate,
+  setEndDate,
+  timeperiod,
+  setTimeperiod,
+}) => {
+  const [selectedSource, setSelectedSource] = useState("EB");
   const [totalEnergyUsed, setTotalEnergyUsed] = useState(0);
   const [totalCostSaved, setTotalCostSaved] = useState(0);
   const [percentageChange, setPercentageChange] = useState(-12.5); // Example value for demonstration
   const [curVal, setCurVal] = useState(0); // Example value for demonstration
+  const [open, setOpen] = useState(false);
+  const [unitPrice, setUnitPrice] = useState(10); // Default unit price
+  const [inputUnitPrice, setInputUnitPrice] = useState(unitPrice);
 
   useEffect(() => {
     if (
@@ -17,12 +46,25 @@ const EnergyComp = ({ data }) => {
     ) {
       const today = data["today"];
       const resample = data["resampled data"];
-      console.log("resample", resample);
 
       let totalEnergy = 0;
       let currentValue = 0;
 
-      if (selectedSource === "DG1") {
+      if (selectedSource === "All") {
+        // Calculate total for all sources
+        totalEnergy = resample.reduce(
+          (sum, entry) =>
+            sum +
+            (entry.DG1S12Reading_kw || 0) +
+            (entry.DG2S3Reading_kw || 0) +
+            (entry.EBS10Reading_kw || 0),
+          0
+        );
+        currentValue =
+          (today.DG1S12Reading_kw || 0) +
+          (today.DG2S3Reading_kw || 0) +
+          (today.EBS10Reading_kw || 0);
+      } else if (selectedSource === "DG1") {
         totalEnergy = resample.reduce(
           (sum, entry) => sum + (entry.DG1S12Reading_kw || 0),
           0
@@ -42,99 +84,155 @@ const EnergyComp = ({ data }) => {
         currentValue = today.EBS10Reading_kw || 0;
       }
 
-      const costSaved = totalEnergy * 10; // Calculate cost in ₹
+      const costSaved = totalEnergy * unitPrice; // Calculate cost in ₹
 
       setCurVal(currentValue);
       setTotalEnergyUsed(totalEnergy);
       setTotalCostSaved(costSaved);
     }
-  }, [selectedSource, data]);
+  }, [selectedSource, data, unitPrice]);
 
   const handleSourceChange = (event) => {
     setSelectedSource(event.target.value);
   };
 
+  const handleClickOpen = () => {
+    setInputUnitPrice(unitPrice);
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  const handleSave = () => {
+    setUnitPrice(inputUnitPrice);
+    setOpen(false);
+  };
+
   return (
-    <>
-      <div className="card shadow mb-4 h-100">
-        <div>
-          <div className="energy-widget-container">
-            <div className="energy-stat">
-              <h2>Energy Consumption</h2>
-              <div className="energy-today">
-                <h4 style={{ color: "#111111" }}>Today</h4>
-                <h5>From 12am till now</h5>
-                <p
-                  className={`percentage-change ${
-                    percentageChange > 0 ? "positive" : "negative"
-                  }`}
-                >
-                  <i
-                    className={`fas fa-caret-${
-                      percentageChange > 0 ? "up" : "down"
-                    }`}
-                  ></i>
-                  {Math.abs(percentageChange)} % compared to yesterday
-                </p>
-                <EnergyMeter value={curVal} />
-                <p
-                  style={{
-                    textAlign: "left",
-                    padding: "1vh",
-                    marginLeft: "4vw",
-                  }}
-                >
-                  {curVal.toLocaleString()} kWh
-                </p>
-              </div>
-            </div>
-            <div className="energy-savings">
-              <select
-                value={selectedSource}
-                onChange={handleSourceChange}
-                style={{ width: "5vw", marginRight: "0", marginLeft: "auto" }}
-              >
-                <option value="DG1">DG1</option>
-                <option value="DG2">DG2</option>
-                <option value="EB">EB</option>
-              </select>
-              <div className="energy-saved">
-                <h3>Total Energy Used</h3>
-                <p
-                  className={`percentage-change ${
-                    percentageChange > 0 ? "positive" : "negative"
-                  }`}
-                >
-                  <i
-                    className={`fas fa-caret-${
-                      percentageChange > 0 ? "up" : "down"
-                    }`}
-                  ></i>
-                  {Math.abs(percentageChange)} % compared to previous month
-                </p>
-                <p>{totalEnergyUsed.toLocaleString()} kWh</p>
-              </div>
-              <div className="cost-saved">
-                <h3>Total Cost</h3>
-                <p
-                  className={`percentage-change ${
-                    percentageChange > 0 ? "positive" : "negative"
-                  }`}
-                >
-                  <i
-                    className={`fas fa-caret-${
-                      percentageChange > 0 ? "up" : "down"
-                    }`}
-                  ></i>
-                  {Math.abs(percentageChange)} % compared to previous month
-                </p>
-                <p>₹{totalCostSaved.toLocaleString()}</p>
-              </div>
-            </div>
-          </div>
+    <div className="container">
+      <div className="top">
+        <div className="title">Check Energy Consumption</div>
+        <div className="menubar">
+          <TimeDrop
+            dateRange={dateRange}
+            setStartDate={setStartDate}
+            setDateRange={setDateRange}
+            setEndDate={setEndDate}
+            setTimeperiod={setTimeperiod}
+          />
         </div>
       </div>
-    </>
+
+      <div className="header">
+        <RadioGroup
+          value={selectedSource}
+          onChange={handleSourceChange}
+          aria-label="energy source"
+          sx={{ display: "flex", gap: "16px", flexDirection: "row" }}
+        >
+          <FormControlLabel
+            className="styled-form-control-label"
+            value="All"
+            control={<Radio />}
+            label="All"
+          />
+          <FormControlLabel
+            className="styled-form-control-label"
+            value="EB"
+            control={<Radio />}
+            label="EB Power"
+          />
+          <FormControlLabel
+            className="styled-form-control-label"
+            value="DG1"
+            control={<Radio />}
+            label="DG Source 1"
+          />
+          <FormControlLabel
+            className="styled-form-control-label"
+            value="DG2"
+            control={<Radio />}
+            label="DG Source 2"
+          />
+        </RadioGroup>
+      </div>
+
+      <div className="meter-section">
+        <EnergyMeter value={curVal} />
+        <div className="subtitle">From 12am till now</div>
+        <p className="energy-value">{curVal.toLocaleString()} kWh</p>
+      </div>
+      <div className="stat-section">
+        <div className="stat-box">
+          <h3 className="stat-title">Energy Consumption</h3>
+          <p className="cost-value">{totalEnergyUsed.toLocaleString()} kWh</p>
+        </div>
+        <div className="stat-box">
+          <div className="stat-title">
+            <div>Cost</div>
+            <div className="edit-button">
+              <p className="costenergy"> 1 Unit - {inputUnitPrice} Rs</p>
+
+              <IconButton
+                size="small"
+                onClick={handleClickOpen}
+                sx={{
+                  position: "relative",
+                  verticalAlign: "top",
+
+                  fontSize: "2rem",
+                }}
+              >
+                <BorderColorOutlined
+                  size="small"
+                  sx={{
+                    fontSize: "1rem",
+                  }}
+                />
+              </IconButton>
+            </div>
+          </div>
+          <p className="cost-value">₹{totalCostSaved.toLocaleString()}</p>
+
+          <Dialog open={open} onClose={handleClose}>
+            <DialogTitle>Edit Unit Price</DialogTitle>
+            <DialogContent>
+              <TextField
+                autoFocus
+                margin="dense"
+                label="1 Unit Price (₹)"
+                type="number"
+                fullWidth
+                value={inputUnitPrice}
+                onChange={(e) => setInputUnitPrice(Number(e.target.value))}
+              />
+            </DialogContent>
+            <DialogActions>
+              <Button
+                className="button"
+                sx={{
+                  background: "#ffffff",
+                  color: "#1B2533",
+                  border: "1px solid #C1C7D1",
+                }}
+                onClick={handleClose}
+              >
+                Cancel
+              </Button>
+              <Button
+                className="button"
+                onClick={handleSave}
+                sx={{ background: "#6036D4", color: "#ffffff" }}
+              >
+                Submit
+              </Button>
+            </DialogActions>
+          </Dialog>
+        </div>
+      </div>
+    </div>
   );
 };
 

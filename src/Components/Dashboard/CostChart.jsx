@@ -3,11 +3,11 @@ import { Bar } from "react-chartjs-2";
 import "chart.js/auto";
 import dayjs from "dayjs";
 import TimeBar from "../TRFF/TimePeriod"; // Ensure this path is correct
-import DateRangeSelector from "../Dashboard/Daterangeselector";
-import ToggleButtons from "../Dashboard/Togglesampling";
-import "../Dashboard/StackedBarDGEB.css"; // Use the existing CSS file for styling
+import ToggleButtons from "./Togglesampling"; // Import the ToggleButtons component
+import DateRangeSelector from "./Daterangeselector"; // Import the DateRangeSelector component
+import "./StackedBarDGEB.css"; // Import the CSS file
 
-const CompositeChart = ({
+const CostChart = ({
   data,
   startDate,
   setStartDate,
@@ -17,7 +17,7 @@ const CompositeChart = ({
   setTimeperiod,
   dateRange,
   setDateRange,
-  backgroundColors = [], // Add backgroundColors prop if needed
+  backgroundColors = [], // Add backgroundColors prop
 }) => {
   const [chartData, setChartData] = useState({});
   const [loading, setLoading] = useState(true);
@@ -28,32 +28,25 @@ const CompositeChart = ({
       try {
         const resampledData = data["resampled data"];
 
-        const average =
-          resampledData.reduce((sum, item) => sum + item.kwh_eb, 0) /
-          resampledData.length;
+        // Define the keys to include manually and their custom labels
+        const kwKeys = [
+          { key: "DG1S12Reading_kw", label: "Diesel Generator 1" },
+          { key: "EBS10Reading_kw", label: "EB Supply" },
+          { key: "DG2S3Reading_kw", label: "Diesel Generator 2" },
+        ];
 
+        // Generate x-axis labels based on selected time period
         const xAxisLabels = generateXAxisLabels(resampledData);
 
-        const datasets = [
-          {
-            type: "line",
-            label: "Total kWh",
-            data: resampledData.map((item) => item.kwh_eb),
-            fill: true,
-            borderColor: "rgba(75,192,192,1)",
-            borderWidth: 1,
-            tension: 0.4,
-            pointRadius: 1.5,
-          },
-          {
-            type: "bar",
-            label: "Total kWh (Bar Chart)",
-            data: resampledData.map((item) => item.kwh_eb),
-            backgroundColor: resampledData.map((item) =>
-              item.kwh_eb > average ? "#DD3409" : "#6036D4"
-            ),
-          },
-        ];
+        const datasets = kwKeys.map((entry, index) => ({
+          label: entry.label,
+          data: resampledData.map((item) => (item[entry.key] || 0) * 10), // Multiply kW by 10 to get cost
+          backgroundColor:
+            backgroundColors[index] ||
+            `rgba(${Math.floor(Math.random() * 255)}, ${Math.floor(
+              Math.random() * 255
+            )}, ${Math.floor(Math.random() * 255)}, 0.6)`,
+        }));
 
         setChartData({
           labels: xAxisLabels,
@@ -69,36 +62,37 @@ const CompositeChart = ({
       setLoading(false);
       setError("No resampled data available");
     }
-  }, [data, timeperiod]);
+  }, [data, timeperiod, backgroundColors]);
 
+  // Function to generate x-axis labels based on timeperiod
   const generateXAxisLabels = (resampledData) => {
     if (!resampledData || resampledData.length === 0) return [];
 
     switch (timeperiod) {
-      case "H":
+      case "H": // Hourly
         return resampledData.map((item) =>
           dayjs(item.timestamp).format("MMM D, H:mm")
         );
-      case "D":
+      case "D": // Daily
         return resampledData.map((item) =>
           dayjs(item.timestamp).format("MMM D, YYYY")
         );
-      case "W":
+      case "W": // Weekly
         return resampledData.map((item, index) => {
           const weekNumber = dayjs(item.timestamp).week();
           return `Week ${weekNumber} - ${dayjs(item.timestamp).format("MMM")}`;
         });
-      case "M":
+      case "M": // Monthly
         return resampledData.map((item) =>
           dayjs(item.timestamp).format("MMM YYYY")
         );
-      case "Q":
+      case "Q": // Quarterly
         return resampledData.map((item) => {
           const month = dayjs(item.timestamp).month();
           const quarter = Math.floor(month / 3) + 1;
           return `Q${quarter} ${dayjs(item.timestamp).format("YYYY")}`;
         });
-      case "Y":
+      case "Y": // Yearly
         return resampledData.map((item) =>
           dayjs(item.timestamp).format("YYYY")
         );
@@ -122,16 +116,16 @@ const CompositeChart = ({
       <div className="card shadow mb-4">
         <div className="card-body">
           <div className="row">
-            <div className="title">Composite Chart (Line & Bar)</div>
+            <div className="title">Energy Cost by Source (Rs)</div>
             <div className="controls">
               <TimeBar
                 setStartDate={setStartDate}
                 setEndDate={setEndDate}
                 dateRange={dateRange}
                 setDateRange={setDateRange}
-                setTimeperiod={setTimeperiod}
-                startDate={startDate}
-                endDate={endDate}
+                setTimeperiod={setTimeperiod} // Pass setTimeperiod to TimeBar
+                startDate={startDate} // Pass startDate
+                endDate={endDate} // Pass endDate
               />
               <DateRangeSelector
                 startDate={startDate}
@@ -148,49 +142,58 @@ const CompositeChart = ({
               setTimeperiod={setTimeperiod}
             />
           </div>
-          <div className="chart-content">
-            <Bar
-              data={chartData}
-              options={{
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                  legend: {
-                    display: false,
-                    position: "bottom",
-                    align: "start",
-                    labels: {
-                      boxWidth: 15,
-                      boxHeight: 15,
-                      padding: 20,
-                      font: {
-                        size: 14,
-                        family: "DM Sans",
+
+          {chartData && chartData.labels && chartData.labels.length > 0 ? (
+            <div className="chart-size">
+              <Bar
+                data={chartData}
+                options={{
+                  responsive: true,
+                  maintainAspectRatio: false,
+                  plugins: {
+                    legend: {
+                      display: true,
+                      position: "bottom", // Position legend at the bottom
+                      align: "start", // Align legends to the start of the container
+                      labels: {
+                        boxWidth: 15,
+                        boxHeight: 15,
+                        padding: 20,
+                        font: {
+                          size: 14,
+                          family: "DM Sans",
+                        },
+                        usePointStyle: true,
+                        color: "#333",
                       },
-                      usePointStyle: true,
-                      color: "#333",
                     },
                   },
-                },
-                scales: {
-                  x: {
-                    stacked: true,
-                    grid: {
-                      color: "rgba(0, 0, 0, 0.05)",
-                      borderDash: [8, 4],
+                  scales: {
+                    x: {
+                      stacked: true,
+                      grid: {
+                        color: "rgba(0, 0, 0, 0.05)", // Light gray color with 5% opacity
+                        borderDash: [8, 4], // Dotted line style
+                      },
+                    },
+                    y: {
+                      stacked: true,
+                      title: {
+                        display: true,
+                        text: "Cost (Rs)",
+                      },
                     },
                   },
-                  y: {
-                    stacked: true,
-                  },
-                },
-              }}
-            />
-          </div>
+                }}
+              />
+            </div>
+          ) : (
+            <div>No data available for the selected range.</div>
+          )}
         </div>
       </div>
     </div>
   );
 };
 
-export default CompositeChart;
+export default CostChart;

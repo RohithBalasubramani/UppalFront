@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Line } from "react-chartjs-2";
 import axios from "axios";
+import "./realtimestyle.css"; // Import the CSS file
 
 const RealTimeVoltageChart = () => {
   const [data, setData] = useState([]);
@@ -106,6 +107,9 @@ const RealTimeVoltageChart = () => {
         ),
         borderColor: "rgba(255, 99, 132, 1)",
         borderWidth: 2,
+        pointRadius: 0,
+        pointHoverRadius: 0,
+        tension: 0.4, // Smooth line
       },
       {
         label: "V2 Voltage",
@@ -114,6 +118,9 @@ const RealTimeVoltageChart = () => {
         ),
         borderColor: "rgba(54, 162, 235, 1)",
         borderWidth: 2,
+        pointRadius: 0,
+        pointHoverRadius: 0,
+        tension: 0.4, // Smooth line
       },
       {
         label: "V3 Voltage",
@@ -122,6 +129,9 @@ const RealTimeVoltageChart = () => {
         ),
         borderColor: "rgba(255, 206, 86, 1)",
         borderWidth: 2,
+        pointRadius: 0,
+        pointHoverRadius: 0,
+        tension: 0.4, // Smooth line
       },
       {
         label: "LN Voltage",
@@ -130,33 +140,118 @@ const RealTimeVoltageChart = () => {
         ),
         borderColor: "rgba(75, 192, 192, 1)",
         borderWidth: 2,
+        pointRadius: 0,
+        pointHoverRadius: 0,
+        tension: 0.4, // Smooth line
       },
     ],
   };
 
   const options = {
+    maintainAspectRatio: false,
     scales: {
       x: {
         type: "time",
+        grid: {
+          color: "rgba(0, 0, 0, 0.05)",
+          borderDash: [5, 5],
+        },
       },
       y: {
         title: {
           display: true,
           text: "Voltage (V)",
         },
+        grid: {
+          color: "rgba(0, 0, 0, 0.05)",
+          borderDash: [5, 5],
+        },
+      },
+    },
+    plugins: {
+      legend: {
+        display: false, // Hide default legend
       },
     },
   };
 
   return (
-    <div>
-      <div className="card shadow mb-4">
-        <div className="card-header py-3">
-          <h6 className="m-0 font-weight-bold text-primary">Voltage Chart</h6>
-          <div>Status: {powerStatus}</div>
+    <div className="containerchart">
+      <div className="chart-cont">
+        <div className="title">Voltage</div>
+        <div className="legend-container-two">
+          <div className="legend-item">
+            <span className="legend-color-box v1" />
+            <span>V1 Voltage</span>
+          </div>
+          <div className="legend-item">
+            <span className="legend-color-box v2" />
+            <span>V2 Voltage</span>
+          </div>
+          <div className="legend-item">
+            <span className="legend-color-box v3" />
+            <span>V3 Voltage</span>
+          </div>
+          <div className="legend-item">
+            <span className="legend-color-box ln" />
+            <span>LN Voltage</span>
+          </div>
         </div>
-        <div className="card-body">
+        <div className="chart-size">
           <Line data={voltageChartData} options={options} />
+        </div>
+      </div>
+      <div className="value-cont">
+        <div className="value-heading">Voltage</div>
+        <div className="current-value">Current Value</div>
+        <div className="legend-container">
+          <div className="legend-item-two">
+            <div className="value-name">
+              <span className="legend-color-box v1" /> V1 Voltage
+            </div>
+            <div className="value">
+              {activeData.length > 0
+                ? activeData[activeData.length - 1].ebV1.toFixed(2)
+                : "0.00"}{" "}
+              <span className="value-span">V</span>
+            </div>
+          </div>
+          <div className="legend-item-two">
+            <div className="value-name">
+              <span className="legend-color-box v2" />
+              V2 Voltage
+            </div>
+            <div className="value">
+              {activeData.length > 0
+                ? activeData[activeData.length - 1].ebV2.toFixed(2)
+                : "0.00"}{" "}
+              <span className="value-span">V</span>
+            </div>
+          </div>
+          <div className="legend-item-two">
+            <div className="value-name">
+              <span className="legend-color-box v3" />
+              V3 Voltage
+            </div>
+            <div className="value">
+              {activeData.length > 0
+                ? activeData[activeData.length - 1].ebV3.toFixed(2)
+                : "0.00"}{" "}
+              <span className="value-span">V</span>
+            </div>
+          </div>
+          <div className="legend-item-two">
+            <div className="value-name">
+              <span className="legend-color-box ln" />
+              LN Voltage
+            </div>
+            <div className="value">
+              {activeData.length > 0
+                ? activeData[activeData.length - 1].ebLN.toFixed(2)
+                : "0.00"}{" "}
+              <span className="value-span">V</span>
+            </div>
+          </div>
         </div>
       </div>
     </div>

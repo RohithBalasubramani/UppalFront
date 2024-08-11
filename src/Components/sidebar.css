@@ -1,0 +1,149 @@
+/* custom.css */
+
+/* Override the primary background color */
+.bg-gradient-primary {
+  background-color: #ffffff !important;
+  background-image: linear-gradient(
+    180deg,
+    #ffffff 10%,
+    #ffffff 100%
+  ) !important;
+  background-size: cover;
+  color: #697483;
+  text-align: center;
+  font-feature-settings: "liga" off, "clig" off;
+
+  /* Paragraph/text-sm/[R] */
+  font-family: "DM Sans";
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 20px; /* 142.857% */
+  padding-right: 1vh;
+}
+
+/* Override the sidebar text color */
+.sidebar .nav-link {
+  color: #697483 !important;
+}
+
+/* Override the font family and font size */
+.sidebar,
+.sidebar .nav-link {
+  font-family: "DM Sans" !important;
+  font-size: 16px !important;
+  color: #697483 !important;
+}
+
+.sidebar .sidebar-brand-text {
+  color: var(--Gray---Typography-800, #1b2533);
+  font-feature-settings: "liga" off, "clig" off;
+  font-family: "Red Hat Display";
+  font-size: 24px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 20px; /* 83.333% */
+  letter-spacing: -1px;
+}
+/* Override the brand text color */
+.sidebar .sidebar-brand-text {
+  color: #697483 !important;
+
+  font-feature-settings: "liga" off, "clig" off;
+  font-family: "Red Hat Display";
+  font-size: 24px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 20px; /* 83.333% */
+  letter-spacing: -1px;
+  text-align: left;
+}
+
+/* Override the active nav item background color */
+.nav-item.active {
+  background-color: #f5f7fa !important; /* Light background for active item */
+  color: #697483 !important;
+  border-radius: 8px;
+  color: var(--Gray---Typography-800, #1b2533);
+  font-feature-settings: "liga" off, "clig" off;
+  font-family: "DM Sans";
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 20px; /* 142.857% */
+}
+
+/* Custom style for active nav link */
+.nav-item.active .nav-link {
+  color: #1b2533 !important; /* Different color for active link text */
+  background-color: #f0ecfd;
+  border-radius: 8px;
+}
+
+/* Override the collapse header color */
+.collapse-header {
+  color: #697483 !important;
+}
+
+.sidebar-divider {
+  color: #697483 !important;
+  background: #eaecf0;
+}
+
+.sidebar-heading {
+  color: #697483 !important;
+}
+
+.sidebar-heading {
+  color: #697483 !important;
+}
+
+.nav-item {
+  margin-bottom: 0.5vh;
+  margin-top: 0vh;
+  border-radius: 8px;
+}
+
+/* Ensure the button has a defined size and background color */
+.rounded-circle {
+  color: #697483 !important;
+  background: #eaecf0;
+  width: 50px; /* Adjust width as needed */
+  height: 50px; /* Adjust height as needed */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid #6b3ceb;
+  transition: background 0.3s, color 0.3s;
+}
+
+.rounded-circle:hover {
+  color: #ffffff !important;
+  background: #6b3ceb;
+}
+state */ .nav-link:hover {
+  color: #1b2533;
+  text-align: center;
+  font-feature-settings: "liga" off, "clig" off;
+  font-family: "DM Sans";
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 20px; /* 142.857% */
+  border-radius: 8px;
+  background: var(--Bluish-Purple-50, #f0ecfd);
+}
+
+/* Style for icon in active state */
+.nav-item.active .nav-link .MuiSvgIcon-root {
+  color: #1b2533;
+  text-align: center;
+  font-feature-settings: "liga" off, "clig" off;
+  font-family: "DM Sans";
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 20px; /* 142.857% */
+  border-radius: 8px;
+  background: var(--Bluish-Purple-50, #f0ecfd);
+}

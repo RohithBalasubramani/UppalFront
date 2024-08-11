@@ -1,15 +1,36 @@
 import React, { useEffect, useState } from "react";
 import { Line } from "react-chartjs-2";
-import { Chart as ChartJS, registerables } from "chart.js";
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  LineElement,
+  TimeScale,
+  Title,
+  Tooltip,
+  Legend,
+  registerables,
+} from "chart.js";
 import axios from "axios";
+import "./realtimestyle.css"; // Import the shared CSS file
 
-ChartJS.register(...registerables);
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  LineElement,
+  TimeScale,
+  Title,
+  Tooltip,
+  Legend,
+  ...registerables
+);
 
 const RealTimeChart = () => {
   const [data, setData] = useState([]);
   const [powerStatus, setPowerStatus] = useState("Loading...");
   const [activeData, setActiveData] = useState([]);
 
+  // Fetch data from APIs
   const fetchData = async () => {
     const currentTime = new Date().toISOString();
     const params = {
@@ -34,6 +55,7 @@ const RealTimeChart = () => {
     }
   };
 
+  // Update chart data
   const updateChartData = (ebRecent, dgRecent, dg1s12Recent) => {
     const newEntry = {
       time: ebRecent.timestamp || dgRecent.timestamp || dg1s12Recent.timestamp,
@@ -76,6 +98,7 @@ const RealTimeChart = () => {
     });
   };
 
+  // Update power status
   const updatePowerStatus = (ebRecent, dgRecent, dg1s12Recent) => {
     if (ebRecent.average_current > 0) {
       setPowerStatus("Running on EB Power");
@@ -88,6 +111,7 @@ const RealTimeChart = () => {
     }
   };
 
+  // Set up data fetching interval
   useEffect(() => {
     const interval = setInterval(() => {
       fetchData();
@@ -96,6 +120,7 @@ const RealTimeChart = () => {
     return () => clearInterval(interval);
   }, []);
 
+  // Configure chart data
   const chartData = {
     labels: activeData.map((item) => item.time),
     datasets: [
@@ -103,30 +128,33 @@ const RealTimeChart = () => {
         type: "line",
         label: "Active Power (kWh)",
         data: activeData.map((item) => item.kwh),
-        fill: false,
-        borderColor: "rgba(75,192,192,1)",
+        fill: true,
+        borderColor: "#6a50a7", // Line color
+        backgroundColor: "rgba(106, 80, 167, 0.2)", // Area fill color
         borderWidth: 2,
-      },
-      {
-        type: "bar",
-        label: "Active Power (kWh)",
-        data: activeData.map((item) => item.kwh),
-        backgroundColor: "rgba(75,192,192,0.2)",
-        borderColor: "rgba(75,192,192,1)",
-        borderWidth: 1,
+        pointRadius: 4, // Show points
+        pointBackgroundColor: "#6a50a7", // Point color
+        pointHoverRadius: 6,
+        tension: 0.4, // Smooth line
       },
     ],
   };
 
+  // Configure chart options
   const maxKwh = Math.max(...activeData.map((item) => item.kwh), 0);
-  const minKwh = Math.min(...activeData.map((item) => item.kwh), 0);
 
   const options = {
+    maintainAspectRatio: false,
     scales: {
       x: {
         type: "time",
         time: {
           tooltipFormat: "ll HH:mm",
+        },
+        grid: {
+          color: "rgba(0, 0, 0, 0.05)", // Light gray color for the grid
+          borderDash: [5, 5], // Dotted line style
+          borderWidth: 1, // Dotted line width
         },
       },
       y: {
@@ -135,22 +163,52 @@ const RealTimeChart = () => {
           text: "Power (kWh)",
         },
         min: maxKwh - 5, // dynamically adjust the scale
-        max: maxKwh + 2, // dynamically adjust the scale
+        max: maxKwh + 5, // dynamically adjust the scale
+        grid: {
+          color: "rgba(0, 0, 0, 0.05)", // Light gray color for the grid
+          borderDash: [5, 5], // Dotted line style
+          borderWidth: 1, // Dotted line width
+        },
+      },
+    },
+    plugins: {
+      tooltip: {
+        callbacks: {
+          label: function (context) {
+            let label = context.dataset.label || "";
+            if (label) {
+              label += ": ";
+            }
+            if (context.parsed.y !== null) {
+              label += context.parsed.y + " kWh";
+            }
+            return label;
+          },
+        },
+      },
+      legend: {
+        display: false, // Hide default legend
       },
     },
   };
 
+  // Render the chart component
   return (
-    <div>
-      <div className="card shadow mb-4">
-        <div className="card-header py-3">
-          <h6 className="m-0 font-weight-bold text-primary">
-            Real-Time Power Consumption
-          </h6>
-          <div>Power Status: {powerStatus}</div>
-        </div>
-        <div className="card-body">
+    <div className="containerchart">
+      <div className="chart-cont">
+        <div className="title">Energy Consumption</div>
+        <div className="chart-size">
           <Line data={chartData} options={options} />
+        </div>
+      </div>
+      <div className="value-cont">
+        <div className="value-heading">Energy Consumption</div>
+        <div className="current-value">Current Value</div>
+        <div className="power-value">
+          {activeData.length > 0
+            ? `${activeData[activeData.length - 1].kwh.toFixed(2)} `
+            : "0.00"}{" "}
+          <span className="value-span">kWh</span>
         </div>
       </div>
     </div>

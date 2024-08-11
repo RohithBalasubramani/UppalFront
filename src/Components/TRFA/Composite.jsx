@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Line } from "react-chartjs-2";
 import { Chart as ChartJS, registerables } from "chart.js";
 import axios from "axios";
+import "../Dashboard/realtimestyle.css"; // Import the shared CSS file
 
 ChartJS.register(...registerables);
 
@@ -77,6 +78,10 @@ const RealTimeChart = ({ source }) => {
     return () => clearInterval(interval);
   }, [source]);
 
+  // Calculate max and min for y-axis based on active data
+  const maxKwh = Math.max(...activeData.map((item) => item.kwh));
+  const minKwh = Math.min(...activeData.map((item) => item.kwh));
+
   const chartData = {
     labels: activeData.map((item) => item.time),
     datasets: [
@@ -84,51 +89,85 @@ const RealTimeChart = ({ source }) => {
         type: "line",
         label: "Active Power (kWh)",
         data: activeData.map((item) => item.kwh),
-        fill: false,
-        borderColor: "rgba(75,192,192,1)",
+        fill: true, // Fill the area under the line
+        borderColor: "#6a50a7", // Line color
+        backgroundColor: "rgba(106, 80, 167, 0.2)", // Area fill color
         borderWidth: 2,
-      },
-      {
-        type: "bar",
-        label: "Active Power (kWh)",
-        data: activeData.map((item) => item.kwh),
-        backgroundColor: "rgba(75,192,192,0.2)",
-        borderColor: "rgba(75,192,192,1)",
-        borderWidth: 1,
+        pointRadius: 0, // Hide points
+        tension: 0.4, // Smooth line
       },
     ],
   };
-
-  const maxKwh = Math.max(...activeData.map((item) => item.kwh), 0);
-  const minKwh = Math.min(...activeData.map((item) => item.kwh), 0);
 
   const options = {
     scales: {
       x: {
         type: "time",
+        time: {
+          tooltipFormat: "ll HH:mm",
+        },
+        grid: {
+          color: "rgba(0, 0, 0, 0.05)", // Light gray color for the grid
+          borderDash: [5, 5], // Dotted line style
+        },
       },
       y: {
         title: {
           display: true,
           text: "Power (kWh)",
         },
-        min: maxKwh - 5, // dynamically adjust the scale
-        max: maxKwh + 2, // dynamically adjust the scale
+        min: Math.max(minKwh - 100, 0), // Ensure minimum is not below zero
+        max: maxKwh + 100, // 100 more than max value for padding
+        grid: {
+          color: "rgba(0, 0, 0, 0.05)", // Light gray color for the grid
+          borderDash: [5, 5], // Dotted line style
+        },
+      },
+    },
+    plugins: {
+      tooltip: {
+        callbacks: {
+          label: function (context) {
+            let label = context.dataset.label || "";
+            if (label) {
+              label += ": ";
+            }
+            if (context.parsed.y !== null) {
+              label += context.parsed.y + " kWh";
+            }
+            return label;
+          },
+        },
+      },
+      legend: {
+        display: false, // Hide default legend to use custom styling
       },
     },
   };
 
   return (
-    <div>
-      <div className="card shadow mb-4">
-        <div className="card-header py-3">
-          <h6 className="m-0 font-weight-bold text-primary">
-            Real-Time Power Consumption
-          </h6>
-          <div>Power Status: {powerStatus}</div>
+    <div className="containerchart">
+      <div className="chart-cont">
+        <div className="title">Real-Time Power Consumption</div>
+        <div className="legend-container-two">
+          <div className="legend-item">
+            <span
+              className="legend-color-box"
+              style={{ backgroundColor: "#4B2AA5" }}
+            />
+            <span> Active Power (kWh)</span>
+          </div>
         </div>
-        <div className="card-body">
-          <Line data={chartData} options={options} />
+        <Line data={chartData} options={options} />
+      </div>
+      <div className="value-cont">
+        <div className="value-heading">Power Status</div>
+        <div className="current-value">{powerStatus}</div>
+        <div className="power-value">
+          {activeData.length > 0
+            ? `${activeData[activeData.length - 1].kwh.toFixed(2)}`
+            : "0.00"}{" "}
+          <span className="value-span">kWh</span>
         </div>
       </div>
     </div>

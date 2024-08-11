@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Line } from "react-chartjs-2";
 import axios from "axios";
+import "../Dashboard/realtimestyle.css"; // Import the shared CSS file
 
 const RealTimeCurrentChart = ({ source }) => {
   const [data, setData] = useState([]);
@@ -77,18 +78,27 @@ const RealTimeCurrentChart = ({ source }) => {
         data: activeData.map((item) => item.phaseR),
         borderColor: "rgba(255, 99, 132, 1)",
         borderWidth: 2,
+        pointRadius: 0,
+        pointHoverRadius: 0,
+        tension: 0.4,
       },
       {
         label: "Phase Y Current",
         data: activeData.map((item) => item.phaseY),
         borderColor: "rgba(54, 162, 235, 1)",
         borderWidth: 2,
+        pointRadius: 0,
+        pointHoverRadius: 0,
+        tension: 0.4,
       },
       {
         label: "Phase B Current",
         data: activeData.map((item) => item.phaseB),
         borderColor: "rgba(255, 206, 86, 1)",
         borderWidth: 2,
+        pointRadius: 0,
+        pointHoverRadius: 0,
+        tension: 0.4,
       },
     ],
   };
@@ -100,25 +110,107 @@ const RealTimeCurrentChart = ({ source }) => {
         time: {
           tooltipFormat: "ll HH:mm",
         },
+        grid: {
+          color: "rgba(0, 0, 0, 0.05)",
+          borderDash: [5, 5],
+        },
       },
       y: {
         title: {
           display: true,
           text: "Current (A)",
         },
+        grid: {
+          color: "rgba(0, 0, 0, 0.05)",
+          borderDash: [5, 5],
+        },
+      },
+    },
+    plugins: {
+      legend: {
+        display: false,
       },
     },
   };
 
   return (
-    <div>
-      <div className="card shadow mb-4">
-        <div className="card-header py-3">
-          <h6 className="m-0 font-weight-bold text-primary">Current Chart</h6>
-          <div>Status: {powerStatus}</div>
+    <div className="containerchart">
+      <div className="chart-cont">
+        <div className="title">Current Chart</div>
+        <div className="legend-container-two">
+          <div className="legend-item">
+            <span
+              className="legend-color-box"
+              style={{ backgroundColor: "rgba(255, 99, 132, 1)" }}
+            />
+            <span>Phase R Current</span>
+          </div>
+          <div className="legend-item">
+            <span
+              className="legend-color-box"
+              style={{ backgroundColor: "rgba(54, 162, 235, 1)" }}
+            />
+            <span>Phase Y Current</span>
+          </div>
+          <div className="legend-item">
+            <span
+              className="legend-color-box"
+              style={{ backgroundColor: "rgba(255, 206, 86, 1)" }}
+            />
+            <span>Phase B Current</span>
+          </div>
         </div>
-        <div className="card-body">
-          <Line data={currentChartData} options={options} />
+        <Line data={currentChartData} options={options} />
+      </div>
+      <div className="value-cont">
+        <div className="value-heading">Current Values</div>
+        <div className="current-value">Current Value</div>
+        <div className="legend-container">
+          <div className="legend-item-two">
+            <div className="value-name">
+              <span
+                className="legend-color-box"
+                style={{ backgroundColor: "rgba(255, 99, 132, 1)" }}
+              />{" "}
+              Phase R Current
+            </div>
+            <div className="value">
+              {activeData.length > 0
+                ? activeData[activeData.length - 1].phaseR.toFixed(2)
+                : "0.00"}{" "}
+              <span className="value-span">A</span>
+            </div>
+          </div>
+          <div className="legend-item-two">
+            <div className="value-name">
+              <span
+                className="legend-color-box"
+                style={{ backgroundColor: "rgba(54, 162, 235, 1)" }}
+              />
+              Phase Y Current
+            </div>
+            <div className="value">
+              {activeData.length > 0
+                ? activeData[activeData.length - 1].phaseY.toFixed(2)
+                : "0.00"}{" "}
+              <span className="value-span">A</span>
+            </div>
+          </div>
+          <div className="legend-item-two">
+            <div className="value-name">
+              <span
+                className="legend-color-box"
+                style={{ backgroundColor: "rgba(255, 206, 86, 1)" }}
+              />
+              Phase B Current
+            </div>
+            <div className="value">
+              {activeData.length > 0
+                ? activeData[activeData.length - 1].phaseB.toFixed(2)
+                : "0.00"}{" "}
+              <span className="value-span">A</span>
+            </div>
+          </div>
         </div>
       </div>
     </div>

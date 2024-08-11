@@ -1,16 +1,50 @@
 import React, { useEffect, useState } from "react";
-import Highcharts from "highcharts";
-import HighchartsReact from "highcharts-react-official";
-import highchartsMore from "highcharts/highcharts-more";
-import solidGauge from "highcharts/modules/solid-gauge";
 import axios from "axios";
+import GaugeChart from "react-gauge-chart";
+import styled from "styled-components";
+import { IconButton } from "@mui/material";
+import { Launch } from "@mui/icons-material";
 import "./PowerFactorGauge.css"; // Adjust the path as needed
 
-highchartsMore(Highcharts);
-solidGauge(Highcharts);
+// Styled Components for Consistent Card Design
+const Container = styled.div`
+  display: flex;
+  gap: 2vw;
+  margin-bottom: 2vh;
+`;
+
+const Card = styled.div`
+  background: #ffffff;
+  height: 32vh;
+  width: 20vw;
+  padding: 3vh;
+  box-shadow: 7px 2px 17px 0px #c7c7c71a, 29px 10px 31px 0px #c7c7c717,
+    66px 22px 42px 0px #c7c7c70d;
+  text-align: center;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+`;
+
+const Top = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+`;
+
+const Title = styled.h6`
+  font-weight: bold;
+  color: #333;
+  margin: 0;
+`;
+const GaugeCont = styled.div`
+  margin-left: auto;
+  margin-right: auto;
+`;
 
 const PowerFactorGauge = () => {
-  const [powerFactor, setPowerFactor] = useState(0.9); // Initial dummy data
+  const [powerFactor, setPowerFactor] = useState(95); // Initial dummy data
   const [powerQuality, setPowerQuality] = useState("Loading...");
 
   const fetchPowerFactor = async () => {
@@ -39,103 +73,30 @@ const PowerFactorGauge = () => {
     return () => clearInterval(interval);
   }, []);
 
-  const options = {
-    chart: {
-      type: "gauge",
-      plotBackgroundColor: null,
-      plotBackgroundImage: null,
-      plotBorderWidth: 0,
-      plotShadow: false,
-      height: "80%",
-    },
-    title: {
-      text: null,
-    },
-    pane: {
-      startAngle: -110,
-      endAngle: 110,
-      background: null,
-      center: ["50%", "75%"],
-      size: "110%",
-    },
-    yAxis: {
-      min: 0,
-      max: 1,
-      tickPixelInterval: 72,
-      tickPosition: "inside",
-      tickColor: Highcharts.defaultOptions.chart.backgroundColor || "#FFFFFF",
-      tickLength: 20,
-      tickWidth: 2,
-      minorTickInterval: null,
-      labels: {
-        distance: 20,
-        style: {
-          fontSize: "14px",
-        },
-      },
-      lineWidth: 0,
-      plotBands: [
-        {
-          from: 0,
-          to: 1,
-          color: {
-            linearGradient: { x1: 0, y1: 0, x2: 1, y2: 0 },
-            stops: [
-              [0, "#DF5353"], // Red
-              [0.85, "#DDDF0D"], // Yellow
-              [1, "#55BF3B"], // Green
-            ],
-          },
-          thickness: 20,
-        },
-      ],
-    },
-    series: [
-      {
-        name: "Power Factor",
-        data: [powerFactor],
-        tooltip: {
-          valueSuffix: "",
-        },
-        dataLabels: {
-          format: "{y}",
-          borderWidth: 0,
-          color:
-            (Highcharts.defaultOptions.title &&
-              Highcharts.defaultOptions.title.style &&
-              Highcharts.defaultOptions.title.style.color) ||
-            "#333333",
-          style: {
-            fontSize: "16px",
-          },
-        },
-        dial: {
-          radius: "80%",
-          backgroundColor: "gray",
-          baseWidth: 12,
-          baseLength: "0%",
-          rearLength: "0%",
-        },
-        pivot: {
-          backgroundColor: "gray",
-          radius: 6,
-        },
-      },
-    ],
-  };
-
   return (
-    <div className="card shadow mb-4 h-100">
-      <div className="card-header py-3">
-        <h6 className="m-0 font-weight-bold text-primary">Power Factor</h6>
-        <div>Power Quality: {powerQuality}</div>
+    <>
+      <div className="kpi-cont">
+        <Top>
+          <Title>Power Factor</Title>
+        </Top>
+
+        <GaugeCont>
+          <GaugeChart
+            id="power-factor-gauge"
+            nrOfLevels={20}
+            colors={["#DF5353", "#DDDF0D", "#55BF3B"]} // Red, Yellow, Green
+            arcWidth={0.3}
+            percent={powerFactor}
+            textColor="#333333"
+            needleColor="gray"
+            needleBaseColor="gray"
+            formatTextValue={(value) => `${value.toFixed(2) / 100}`} // Display as percentage
+            style={{ height: "", width: "150px" }} // Adjust as needed
+          />
+          <div className="figuretext">Power Quality: {powerQuality}</div>
+        </GaugeCont>
       </div>
-      <div className="card-body">
-        <div className="highcharts-figure">
-          <HighchartsReact highcharts={Highcharts} options={options} />
-        </div>
-      </div>
-    </div>
+    </>
   );
 };
 

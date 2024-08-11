@@ -8,6 +8,10 @@ import {
   TableRow,
   Paper,
   TableSortLabel,
+  Radio,
+  RadioGroup,
+  FormControlLabel,
+  FormControl,
 } from "@mui/material";
 import styled from "styled-components";
 import FilterListIcon from "@mui/icons-material/FilterList";
@@ -246,12 +250,41 @@ const CheckboxLabel = styled.label`
   color: #444;
 `;
 
-const roundToTwo = (num) => {
-  if (typeof num === "number") {
-    return num.toFixed(2);
-  }
-  return num; // Return as-is if not a number
-};
+const StyledRadioGroup = styled(RadioGroup)({
+  display: "flex",
+  gap: "16px", // Add space between radio buttons
+  flexDirection: "column",
+});
+
+const StyledFormControlLabel = styled(FormControlLabel)(({ theme }) => ({
+  border: "1px solid #EAECF0",
+  borderRadius: "8px", // Rounded corners
+  margin: "0", // Remove margin between buttons
+  padding: "1vh", // Padding for each button
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  textAlign: "center",
+  display: "flex",
+  backgroundColor: "#FFFFFF", // Default background color
+  "& .MuiFormControlLabel-label": {
+    fontFamily: "DM Sans",
+    fontSize: "12px",
+    fontWeight: 400,
+    lineHeight: "16px", // Line height as a string
+    color: "#445164", // Custom text color
+  },
+  "& .MuiRadio-root": {
+    padding: "0 8px", // Padding for radio icon
+    color: "#445164", // Default color for unchecked
+  },
+  "& .MuiRadio-root.Mui-checked": {
+    color: "#4E46B4", // Color when checked
+  },
+  "&:hover": {
+    backgroundColor: "#F3F4F6", // Hover background
+  },
+}));
 
 const DataTable = ({
   tablesData,
@@ -282,6 +315,7 @@ const DataTable = ({
   );
   const [showFilter, setShowFilter] = useState(false);
   const [page, setPage] = useState(0);
+  const [filter, setFilter] = useState("All");
 
   const handleSortRequest = (column) => {
     const isAsc = sortColumn === column && sortOrder === "asc";
@@ -297,17 +331,35 @@ const DataTable = ({
     }));
   };
 
-  console.log("Startdata", tablesData);
-
   const toggleFilter = () => {
     setShowFilter(!showFilter);
   };
 
+  const handleFilterChange = (event) => {
+    setFilter(event.target.value);
+  };
+
+  const filterColumns = (column) => {
+    if (column === "timestamp") {
+      return true; // Always include the timestamp column
+    }
+    if (filter === "All") {
+      return true;
+    } else if (filter === "EB") {
+      return column.endsWith("_eb");
+    } else if (filter === "DG") {
+      return !column.endsWith("_eb");
+    }
+  };
+
+  const filteredColumns = Object.keys(tablesData[0] || {}).filter(
+    (column) => visibleColumns[column] && filterColumns(column)
+  );
+
   const filteredRows = sortedData.filter((row) => {
-    return Object.entries(row).some(([column, value]) => {
-      if (!visibleColumns[column]) return false;
-      return String(value).toLowerCase().includes("");
-    });
+    return filteredColumns.some((column) =>
+      String(row[column]).toLowerCase().includes("")
+    );
   });
 
   const sortedRows = filteredRows.slice().sort((a, b) => {
@@ -445,25 +497,49 @@ const DataTable = ({
                 timeperiod={timeperiod}
                 setTimeperiod={setTimeperiod}
               />
+
+              <FormControl component="fieldset">
+                <StyledRadioGroup
+                  value={filter}
+                  onChange={handleFilterChange}
+                  aria-label="Power Source"
+                  sx={{ display: "flex", flexDirection: "row" }}
+                >
+                  <StyledFormControlLabel
+                    value="All"
+                    control={<Radio />}
+                    label="All"
+                  />
+                  <StyledFormControlLabel
+                    value="EB"
+                    control={<Radio />}
+                    label="EB Power"
+                  />
+                  <StyledFormControlLabel
+                    value="DG"
+                    control={<Radio />}
+                    label="DG Power"
+                  />
+                </StyledRadioGroup>
+              </FormControl>
             </div>
+
             <StyledTableContainer component={Paper}>
               <div>
                 <StyledTable>
                   <TableHead>
                     <TableRow>
-                      {Object.keys(tablesData[0])
-                        .filter((column) => visibleColumns[column])
-                        .map((header) => (
-                          <StyledTableHeader key={header}>
-                            <StyledTableSortLabel
-                              active={sortColumn === header}
-                              direction={sortOrder}
-                              onClick={() => handleSortRequest(header)}
-                            >
-                              {header}
-                            </StyledTableSortLabel>
-                          </StyledTableHeader>
-                        ))}
+                      {filteredColumns.map((header) => (
+                        <StyledTableHeader key={header}>
+                          <StyledTableSortLabel
+                            active={sortColumn === header}
+                            direction={sortOrder}
+                            onClick={() => handleSortRequest(header)}
+                          >
+                            {header}
+                          </StyledTableSortLabel>
+                        </StyledTableHeader>
+                      ))}
                     </TableRow>
                   </TableHead>
                   <TableBody>
@@ -474,15 +550,13 @@ const DataTable = ({
                       )
                       .map((row, rowIndex) => (
                         <StyledTableRow key={rowIndex}>
-                          {Object.entries(row)
-                            .filter(([key]) => visibleColumns[key])
-                            .map(([key, value], cellIndex) => (
-                              <StyledTableCell key={cellIndex}>
-                                {key === "timestamp"
-                                  ? new Date(value).toLocaleString()
-                                  : value}
-                              </StyledTableCell>
-                            ))}
+                          {filteredColumns.map((column) => (
+                            <StyledTableCell key={column}>
+                              {column === "timestamp"
+                                ? new Date(row[column]).toLocaleString()
+                                : row[column]}
+                            </StyledTableCell>
+                          ))}
                         </StyledTableRow>
                       ))}
                   </TableBody>
@@ -511,7 +585,8 @@ const DataTable = ({
           </div>
           <div className="d-flex justify-content-end mb-4">
             <ExportToExcelButton
-              data={tablesData}
+              data={filteredRows} // Pass the filtered rows
+              columns={filteredColumns} // Pass the filtered columns
               filename="table_report.xlsx"
               startDatetime={startDate}
               endDatetime={endDate}

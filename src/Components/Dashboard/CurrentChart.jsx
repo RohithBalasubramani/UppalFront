@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Line } from "react-chartjs-2";
 import axios from "axios";
+import "./realtimestyle.css"; // Import the shared CSS file
 
 const RealTimeCurrentChart = () => {
   const [data, setData] = useState([]);
@@ -115,6 +116,9 @@ const RealTimeCurrentChart = () => {
         ),
         borderColor: "rgba(255, 99, 132, 1)",
         borderWidth: 2,
+        pointRadius: 0,
+        pointHoverRadius: 0,
+        tension: 0.4, // Smooth line
       },
       {
         label: "Phase Y Current",
@@ -123,6 +127,9 @@ const RealTimeCurrentChart = () => {
         ),
         borderColor: "rgba(54, 162, 235, 1)",
         borderWidth: 2,
+        pointRadius: 0,
+        pointHoverRadius: 0,
+        tension: 0.4, // Smooth line
       },
       {
         label: "Phase B Current",
@@ -131,38 +138,100 @@ const RealTimeCurrentChart = () => {
         ),
         borderColor: "rgba(255, 206, 86, 1)",
         borderWidth: 2,
+        pointRadius: 0,
+        pointHoverRadius: 0,
+        tension: 0.4, // Smooth line
       },
     ],
   };
 
-  // const maxcur = Math.max(...activeData.map((item) => item.phase_2_current), 0);
-  // const mincur = Math.min(...activeData.map((item) => item.phase_2_current), 0);
-
   const options = {
+    maintainAspectRatio: false,
     scales: {
       x: {
         type: "time",
+        grid: {
+          color: "rgba(0, 0, 0, 0.05)",
+          borderDash: [5, 5],
+        },
       },
       y: {
         title: {
           display: true,
           text: "Current (A)",
         },
-        // min: mincur - 40, // dynamically adjust the scale
-        // max: maxcur + 60,
+        grid: {
+          color: "rgba(0, 0, 0, 0.05)",
+          borderDash: [5, 5],
+        },
+      },
+    },
+    plugins: {
+      legend: {
+        display: false, // Hide default legend
       },
     },
   };
 
   return (
-    <div>
-      <div className="card shadow mb-4">
-        <div className="card-header py-3">
-          <h6 className="m-0 font-weight-bold text-primary">Current Chart</h6>
-          <div>Status: {powerStatus}</div>
+    <div className="containerchart">
+      <div className="chart-cont">
+        <div className="title">Current</div>
+        <div className="legend-container-two">
+          <div className="legend-item">
+            <span className="legend-color-box v1" />
+            <span>R phase</span>
+          </div>
+          <div className="legend-item">
+            <span className="legend-color-box v2" />
+            <span>Y phase</span>
+          </div>
+          <div className="legend-item">
+            <span className="legend-color-box v3" />
+            <span>B phase</span>
+          </div>
         </div>
-        <div className="card-body">
+        <div className="chart-size">
           <Line data={currentChartData} options={options} />
+        </div>
+      </div>
+      <div className="value-cont">
+        <div className="value-heading">Current</div>
+        <div className="current-value">Current Value</div>
+        <div className="legend-container">
+          <div className="legend-item-two">
+            <div className="value-name">
+              <span className="legend-color-box v1" /> R phase
+            </div>
+            <div className="value">
+              {activeData.length > 0
+                ? activeData[activeData.length - 1].ebR.toFixed(2)
+                : "0.00"}{" "}
+              <span className="value-span">A</span>
+            </div>
+          </div>
+          <div className="legend-item-two">
+            <div className="value-name">
+              <span className="legend-color-box v2" />Y phase
+            </div>
+            <div className="value">
+              {activeData.length > 0
+                ? activeData[activeData.length - 1].ebY.toFixed(2)
+                : "0.00"}{" "}
+              <span className="value-span">A</span>
+            </div>
+          </div>
+          <div className="legend-item-two">
+            <div className="value-name">
+              <span className="legend-color-box v3" />B phase
+            </div>
+            <div className="value">
+              {activeData.length > 0
+                ? activeData[activeData.length - 1].ebB.toFixed(2)
+                : "0.00"}{" "}
+              <span className="value-span">A</span>
+            </div>
+          </div>
         </div>
       </div>
     </div>

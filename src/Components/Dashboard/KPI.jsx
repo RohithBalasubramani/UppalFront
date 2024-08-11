@@ -3,8 +3,17 @@ import {
   BarChart,
   TrendingUp,
   Warning,
+  ArrowUpward,
 } from "@mui/icons-material";
 import React, { useState, useEffect } from "react";
+// import "./kpi.css";
+import styled from "styled-components";
+
+const Container = styled.div`
+  display: flex;
+  gap: 1vw;
+  margin-bottom: 2vh;
+`;
 
 const KPI = ({ data }) => {
   const [kpiData, setKpiData] = useState({
@@ -12,24 +21,38 @@ const KPI = ({ data }) => {
     total: 0,
     efficiency: 0,
     pendingAlerts: 18,
+    monthlyConsumption: 0,
+    todayConsumption: 0,
+    energyCost: 0,
   });
+
+  console.log("KPI data", data);
 
   useEffect(() => {
     if (data && data["results"] && data["today"]) {
       const topResult = data["results"][0];
       const today = data["today"];
+      const resampled = data["resampled data"];
 
       // Calculate total consumption from resampled data
       const totalConsumption =
-        (topResult.EBS10Reading_kwh || 0) +
-        (topResult.DG1S12Reading_kwh || 0) +
-        (topResult.DG2S3Reading_kwh || 0);
+        (today.EBS10Reading_kwh || 0) +
+        (today.DG1S12Reading_kwh || 0) +
+        (today.DG2S3Reading_kwh || 0);
 
       // Calculate today's consumption from today data
       const todayConsumption =
         (today.EBS10Reading_kw || 0) +
         (today.DG1S12Reading_kw || 0) +
         (today.DG2S3Reading_kw || 0);
+
+      // Calculate monthly energy consumption from resampled data
+      const monthlyConsumption = resampled.reduce((total, item) => {
+        return total + (item.EBS10Reading_kw || 0);
+      }, 0);
+
+      // Calculate energy cost (example: assume $0.10 per kWh)
+      const energyCost = (monthlyConsumption * 0.1).toFixed(2);
 
       const efficiency = 78; // Example efficiency calculation
       const pendingAlerts = 18; // Assuming alerts are part of recent data
@@ -39,6 +62,9 @@ const KPI = ({ data }) => {
         total: totalConsumption / 1000, // Convert to MWh
         efficiency,
         pendingAlerts,
+        monthlyConsumption, // Add monthly consumption to state
+        todayConsumption, // Add today's consumption to state
+        energyCost, // Add energy cost to state
       });
     }
   }, [data]);
@@ -47,116 +73,67 @@ const KPI = ({ data }) => {
 
   return (
     <>
-      <div className="row">
-        {/* Energy Consumption Today Card */}
-        <div className="col-xl-3 col-md-6 mb-4">
-          <div className="card border-left-primary shadow h-100 py-2">
-            <div className="card-body">
-              <div className="row no-gutters align-items-center">
-                <div className="col mr-2">
-                  <div className="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                    Energy Consumption Today
-                  </div>
-                  <div className="h5 mb-0 font-weight-bold text-gray-800">
-                    {kpiData.actpow.toFixed(2)} kWh
-                  </div>
-                </div>
-                <div className="col-auto">
-                  <BatteryChargingFull
-                    style={iconStyle}
-                    className="fas fa fa-2x text-gray-300"
-                  />
-                </div>
-              </div>
+      <Container>
+        {/* Monthly Energy Consumption Card */}
+        <div className="kpi-cont">
+          <div className="kpi-top">
+            <div className="kpi-tit">Monthly Energy Consumption</div>
+            <div style={{ display: "inline" }}>
+              <span className="kpi-val">
+                {" "}
+                {kpiData.monthlyConsumption.toLocaleString()}{" "}
+              </span>
+              <span className="kpi-units"> kWh </span>
             </div>
+          </div>
+          <div className="kpi-bot">
+            <span className="percentage-cont">
+              <ArrowUpward sx={{ fontSize: "14px" }} />
+              25%
+            </span>
+            <span className="percentage-span">More than last month</span>
           </div>
         </div>
 
-        {/* Energy Consumption Total Card */}
-        <div className="col-xl-3 col-md-6 mb-4">
-          <div className="card border-left-success shadow h-100 py-2">
-            <div className="card-body">
-              <div className="row no-gutters align-items-center">
-                <div className="col mr-2">
-                  <div className="text-xs font-weight-bold text-success text-uppercase mb-1">
-                    Energy Consumption Total
-                  </div>
-                  <div className="h5 mb-0 font-weight-bold text-gray-800">
-                    {kpiData.total.toFixed(2)} MWh
-                  </div>
-                </div>
-                <div className="col-auto">
-                  <BarChart
-                    style={iconStyle}
-                    className="fas fa fa-2x text-gray-300"
-                  />
-                </div>
-              </div>
+        {/* Today's Energy Consumption Card */}
+        <div className="kpi-cont">
+          <div className="kpi-top">
+            <div className="kpi-tit">Today's Energy Consumption</div>
+            <div style={{ display: "inline" }}>
+              <span className="kpi-val">
+                {" "}
+                {kpiData.todayConsumption.toLocaleString()}{" "}
+              </span>
+              <span className="kpi-units"> kWh </span>
             </div>
+          </div>
+          <div className="kpi-bot">
+            <span className="percentage-cont">
+              <ArrowUpward sx={{ fontSize: "14px" }} />
+              15%
+            </span>
+            <span className="percentage-span">More than yesterday</span>
           </div>
         </div>
 
-        {/* Efficiency Card */}
-        <div className="col-xl-3 col-md-6 mb-4">
-          <div className="card border-left-danger shadow h-100 py-2">
-            <div className="card-body">
-              <div className="row no-gutters align-items-center">
-                <div className="col mr-2">
-                  <div className="text-xs font-weight-bold text-info text-uppercase mb-1">
-                    Load
-                  </div>
-                  <div className="row no-gutters align-items-center">
-                    <div className="col-auto">
-                      <div className="h5 mb-0 mr-3 font-weight-bold text-gray-800">
-                        {kpiData.efficiency.toFixed(2)}%
-                      </div>
-                    </div>
-                    <div className="col">
-                      <div className="progress progress-sm mr-2">
-                        <div
-                          className="progress-bar bg-danger"
-                          role="progressbar"
-                          style={{ width: `${kpiData.efficiency}%` }}
-                        ></div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div className="col-auto">
-                  <TrendingUp
-                    style={iconStyle}
-                    className="fas fa fa-2x text-gray-300"
-                  />
-                </div>
-              </div>
+        {/* Energy Cost Card */}
+        <div className="kpi-cont">
+          <div className="kpi-top">
+            <div className="kpi-tit">Monthly Energy Cost</div>
+            <div style={{ display: "inline" }}>
+              <span className="kpi-val"> ₹{kpiData.energyCost} </span>
+              <span className="kpi-units"> INR </span>
             </div>
           </div>
-        </div>
-
-        {/* Pending Alerts Card */}
-        <div className="col-xl-3 col-md-6 mb-4">
-          <div className="card border-left-warning shadow h-100 py-2">
-            <div className="card-body">
-              <div className="row no-gutters align-items-center">
-                <div className="col mr-2">
-                  <div className="text-xs font-weight-bold text-warning text-uppercase mb-1">
-                    Pending Alerts
-                  </div>
-                  <div className="h5 mb-0 font-weight-bold text-gray-800">
-                    {kpiData.pendingAlerts}
-                  </div>
-                </div>
-                <div className="col-auto">
-                  <Warning
-                    style={iconStyle}
-                    className="fas fa fa-2x text-gray-300"
-                  />
-                </div>
-              </div>
-            </div>
+          <div className="kpi-bot">
+            <span className="percentage-cont">
+              <ArrowUpward sx={{ fontSize: "14px" }} />
+              20%
+            </span>
+            <span className="percentage-span">More than last month</span>
           </div>
         </div>
-      </div>
+      </Container>
     </>
   );
 };

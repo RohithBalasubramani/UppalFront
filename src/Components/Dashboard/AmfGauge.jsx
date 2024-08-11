@@ -1,6 +1,45 @@
 import { Gauge, gaugeClasses } from "@mui/x-charts";
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import styled from "styled-components";
+import { ArrowUpward, Launch } from "@mui/icons-material";
+import { IconButton } from "@mui/material";
+import PowerFactorGauge from "./PowerFactor";
+
+// Styled components for layout and styling
+const Container = styled.div`
+  display: flex;
+  gap: 1vw;
+  margin-bottom: 2vh;
+`;
+
+const Top = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+`;
+
+const GaugeCont = styled.div`
+  margin-left: auto;
+  margin-right: auto;
+`;
+
+const Card = styled.div`
+  background: #ffffff;
+  height: 32vh;
+  width: 20vw;
+  padding: 16px 0px 0px 0px;
+  padding: 3vh;
+  box-shadow: 7px 2px 17px 0px #c7c7c71a, 29px 10px 31px 0px #c7c7c717,
+    66px 22px 42px 0px #c7c7c70d;
+  text-align: center;
+  position: relative;
+`;
+
+const Title = styled.div`
+  font-weight: bold;
+  color: #333;
+`;
 
 const AMFgauge = () => {
   const [ebUsage, setEbUsage] = useState(0);
@@ -39,64 +78,82 @@ const AMFgauge = () => {
   }, []);
 
   return (
-    <div>
-      <div className="row">
-        <div className="col-lg-6 mb-4" style={{ height: "500px" }}>
-          <div className="card shadow mb-4 h-50">
-            <div className="card-header py-3">
-              <h6 className="m-0 font-weight-bold text-primary">EB Usage</h6>
-              <div>Total: {ebTot} Kwh</div>
+    <Container>
+      {/* EB Usage Card */}
+      <div className="kpi-cont">
+        <div className="kpi-top">
+          <Top>
+            <Title>Total EB Usage</Title>
+            <IconButton aria-label="open-link" size="small">
+              <Launch fontSize="inherit" />
+            </IconButton>
+          </Top>
+          <GaugeCont>
+            <Gauge
+              width={95}
+              height={95}
+              startAngle={-130}
+              endAngle={130}
+              innerRadius="75%"
+              outerRadius="110%"
+              value={ebUsage}
+              text={({ value }) => `${value.toFixed(2)} ${" %"}`}
+              cornerRadius="50%"
+              sx={{
+                [`& .${gaugeClasses.valueText}`]: {
+                  fontSize: "14px", // Adjust the font size here
+                },
+                [`& .${gaugeClasses.valueArc}`]: {
+                  fill: "#2E7D32",
+                },
+              }}
+            />
+            <div className="figuretext">
+              <span>{ebTot.toLocaleString()}</span>
+              <span> kWh </span>
             </div>
-            <div className="card-body">
-              <Gauge
-                width={140}
-                height={100}
-                startAngle={-130}
-                endAngle={130}
-                innerRadius="75%"
-                outerRadius="110%"
-                value={ebUsage}
-                text={({ value }) => `${value.toFixed(2)} ${" %"}`}
-                cornerRadius="50%"
-                sx={(theme) => ({
-                  [`& .${gaugeClasses.valueArc}`]: {
-                    fill: "#aeff00",
-                  },
-                })}
-              />
-              <div style={{ textAlign: "center", width: "100%" }}>EB Usage</div>
-            </div>
-          </div>
-        </div>
-        <div className="col-lg-6 mb-4" style={{ height: "500px" }}>
-          <div className="card shadow mb-4 h-50">
-            <div className="card-header py-3">
-              <h6 className="m-0 font-weight-bold text-primary">DG Usage</h6>
-              <div>Total: {dgTot} Kwh</div>
-            </div>
-            <div className="card-body">
-              <Gauge
-                width={140}
-                height={100}
-                startAngle={-130}
-                endAngle={130}
-                innerRadius="75%"
-                outerRadius="110%"
-                cornerRadius="50%"
-                value={dgUsage}
-                text={({ value }) => `${value.toFixed(2)} ${" %"}`}
-                sx={(theme) => ({
-                  [`& .${gaugeClasses.valueArc}`]: {
-                    fill: "#ffd900",
-                  },
-                })}
-              />
-              <div style={{ textAlign: "center", width: "100%" }}>DG Usage</div>
-            </div>
-          </div>
+          </GaugeCont>
         </div>
       </div>
-    </div>
+
+      {/* DG Usage Card */}
+      <div className="kpi-cont">
+        <div className="kpi-top">
+          <Top>
+            <Title>Total DG Usage</Title>
+            <IconButton aria-label="open-link" size="small">
+              <Launch fontSize="inherit" />
+            </IconButton>
+          </Top>
+          <GaugeCont>
+            <Gauge
+              width={95}
+              height={95}
+              startAngle={-130}
+              endAngle={130}
+              innerRadius="75%"
+              outerRadius="110%"
+              value={dgUsage}
+              text={({ value }) => `${value.toFixed(2)} ${" %"}`}
+              cornerRadius="50%"
+              sx={{
+                [`& .${gaugeClasses.valueText}`]: {
+                  fontSize: "14px", // Adjust the font size here
+                },
+                [`& .${gaugeClasses.valueArc}`]: {
+                  fill: "#ffd900",
+                },
+              }}
+            />
+            <div className="figuretext">
+              <span>{dgTot.toLocaleString()}</span>
+              <span> kWh </span>
+            </div>
+          </GaugeCont>
+        </div>
+      </div>
+      <PowerFactorGauge />
+    </Container>
   );
 };
 

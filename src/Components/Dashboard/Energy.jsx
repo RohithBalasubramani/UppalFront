@@ -2,16 +2,21 @@ import React from "react";
 import { PieChart, Pie, Sector, Cell } from "recharts";
 
 const EnergyMeter = ({ value }) => {
+  const maxValue = 2500; // Set the maximum value your gauge can represent in kWh
+
+  // Calculate the percentage of the current value relative to the maxValue
+  const percentageValue = (value / maxValue) * 100;
+
   const data = [
-    { name: "Active", value: value },
-    { name: "Inactive", value: 100 - value },
+    { name: "Active", value: percentageValue },
+    { name: "Inactive", value: 100 - percentageValue },
   ];
 
   // Render the custom needle as an SVG path
-  const renderNeedle = (value, color) => {
-    const degrees = (value / 100) * 180; // Convert value to degrees (0 - 180)
+  const renderNeedle = (percentage, color) => {
+    const degrees = (percentage / 100) * 180; // Convert percentage to degrees (0 - 180)
     const radians = (degrees * Math.PI) / 180;
-    const radius = 70; // Should be adjusted based on the outer radius of the Pie chart
+    const radius = 70; // Adjust based on the outer radius of the Pie chart
     // Calculate the position of the needle tip
     const x = 100 + radius * Math.cos(Math.PI - radians);
     const y = 100 - radius * Math.sin(Math.PI - radians);
@@ -47,11 +52,11 @@ const EnergyMeter = ({ value }) => {
           innerRadius={90}
           outerRadius={100}
           startAngle={180}
-          endAngle={180 - (value / 100) * 180}
+          endAngle={180 - (percentageValue / 100) * 180}
           fill="black"
         />
       </Pie>
-      {renderNeedle(value, "red")}
+      {renderNeedle(percentageValue, "red")}
     </PieChart>
   );
 };

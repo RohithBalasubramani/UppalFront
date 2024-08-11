@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Line } from "react-chartjs-2";
 import { Chart as ChartJS, registerables } from "chart.js";
 import axios from "axios";
+import "../Dashboard/realtimestyle.css"; // Import the shared CSS file
 
 ChartJS.register(...registerables);
 
@@ -86,6 +87,8 @@ const RealTimeChart = ({ source }) => {
     });
   };
 
+  console.log("active data", activeData);
+
   const updatePowerStatus = (recentData) => {
     setPowerStatus("Data fetched");
   };
@@ -98,58 +101,98 @@ const RealTimeChart = ({ source }) => {
     return () => clearInterval(interval);
   }, [source]);
 
+  // Calculate max and min for y-axis based on active data
+  const maxKwh = Math.max(...activeData.map((item) => item.kwh_eb));
+  const minKwh = Math.min(...activeData.map((item) => item.kwh_eb));
+  console.log("min", minKwh);
+
   const chartData = {
     labels: activeData.map((item) => item.time),
     datasets: [
       {
         type: "line",
-        label: " Energy (W)",
+        label: "Energy Consumption (Wh)",
         data: activeData.map((item) => item.kwh_eb),
-        fill: false,
-        borderColor: "rgba(75,192,192,1)",
+        fill: true, // Fill the area under the line
+        borderColor: "#6a50a7", // Line color
+        backgroundColor: "rgba(106, 80, 167, 0.2)", // Area fill color
+        // Area fill color
         borderWidth: 2,
-      },
-      {
-        type: "bar",
-        label: "Energy Wh",
-        data: activeData.map((item) => item.kwh_eb),
-        backgroundColor: "rgba(75,192,192,0.2)",
-        borderColor: "rgba(75,192,192,1)",
-        borderWidth: 1,
+        pointRadius: 0, // Hide points
+        tension: 0.4, // Smooth line
       },
     ],
   };
-
-  const maxKwh = Math.max(...activeData.map((item) => item.kwh_eb), 0);
-  const minKwh = Math.min(...activeData.map((item) => item.kwh_eb), 0);
 
   const options = {
     scales: {
       x: {
         type: "time",
+        time: {
+          tooltipFormat: "ll HH:mm",
+        },
+        grid: {
+          color: "rgba(0, 0, 0, 0.05)", // Light gray color for the grid
+          borderDash: [5, 5], // Dotted line style
+        },
       },
       y: {
         title: {
           display: true,
-          text: "Power (Wh) ",
+          text: "Power (Wh)",
         },
-        min: maxKwh - 1000, // dynamically adjust the scale
-        // max: maxKwh + 2, // dynamically adjust the scale
+        min: minKwh - 100, // Adjust min to be 100 less than the minimum kWh value
+        max: maxKwh + 100, // Adjust max to be 100 more than the maximum kWh value
+        grid: {
+          color: "rgba(0, 0, 0, 0.05)", // Light gray color for the grid
+          borderDash: [5, 5], // Dotted line style
+        },
+      },
+    },
+    plugins: {
+      tooltip: {
+        callbacks: {
+          label: function (context) {
+            let label = context.dataset.label || "";
+            if (label) {
+              label += ": ";
+            }
+            if (context.parsed.y !== null) {
+              label += context.parsed.y + " Wh";
+            }
+            return label;
+          },
+        },
+      },
+      legend: {
+        display: false, // Hide default legend to use custom styling
       },
     },
   };
 
   return (
-    <div>
-      <div className="card shadow mb-4">
-        <div className="card-header py-3">
-          <h6 className="m-0 font-weight-bold text-primary">
-            Real-Time Power and Current Consumption
-          </h6>
-          <div>Power Status: {powerStatus}</div>
+    <div className="containerchart">
+      <div className="chart-cont">
+        <div className="title">Real-Time Power Consumption</div>
+        <div className="legend-container-two">
+          <div className="legend-item">
+            <span
+              className="legend-color-box"
+              style={{ backgroundColor: "rgba(75,192,192,1)" }}
+            />
+            <span> Energy Consumption (Wh)</span>
+          </div>
         </div>
-        <div className="card-body">
-          <Line data={chartData} options={options} />
+        <Line data={chartData} options={options} />
+      </div>
+      <div className="value-cont">
+        <div className="value-heading">Power Status</div>
+        <div className="current-value">{powerStatus}</div>
+        <div className="power-value">
+          {activeData.length > 0
+            ? `${activeData[activeData.length - 1].kwh_eb.toFixed(2)}`
+            : "0.00"}{" "}
+          <span className="value-span">Wh</span>
         </div>
       </div>
     </div>

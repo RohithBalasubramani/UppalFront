@@ -1,0 +1,15 @@
+.kpi-container {
+  padding: 16px 0px 0px 0px;
+  gap: 32px;
+  background: #ffffff;
+  display: flex;
+  flex-direction: column;
+}
+
+.kpi-top {
+  height: 80%;
+}
+
+.kpi-bot {
+  height: 20%;
+}
