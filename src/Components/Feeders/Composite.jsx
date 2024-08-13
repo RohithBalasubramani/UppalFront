@@ -125,6 +125,7 @@ const RealTimeChart = ({ source }) => {
   };
 
   const options = {
+    maintainAspectRatio: false,
     scales: {
       x: {
         type: "time",
@@ -178,12 +179,14 @@ const RealTimeChart = ({ source }) => {
           <div className="legend-item">
             <span
               className="legend-color-box"
-              style={{ backgroundColor: "rgba(75,192,192,1)" }}
+              style={{ backgroundColor: "#6a50a7" }}
             />
             <span> Energy Consumption (Wh)</span>
           </div>
         </div>
-        <Line data={chartData} options={options} />
+        <div className="chart-size">
+          <Line data={chartData} options={options} />
+        </div>
       </div>
       <div className="value-cont">
         <div className="value-heading">Power Status</div>

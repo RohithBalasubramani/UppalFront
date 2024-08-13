@@ -133,6 +133,7 @@ const RealTimeVoltageChart = ({ source }) => {
   };
 
   const options = {
+    maintainAspectRatio: false,
     scales: {
       x: {
         type: "time",
@@ -184,7 +185,9 @@ const RealTimeVoltageChart = ({ source }) => {
             <span>BN Voltage</span>
           </div>
         </div>
-        <Line data={voltageChartData} options={options} />
+        <div className="chart-size">
+          <Line data={voltageChartData} options={options} />
+        </div>
       </div>
       <div className="value-cont">
         <div className="value-heading">Voltage</div>

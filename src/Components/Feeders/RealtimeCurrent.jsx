@@ -130,6 +130,7 @@ const RealTimeCurrentChart = ({ source }) => {
   };
 
   const options = {
+    maintainAspectRatio: false,
     scales: {
       x: {
         type: "time",
@@ -193,7 +194,9 @@ const RealTimeCurrentChart = ({ source }) => {
             <span>Phase B Current</span>
           </div>
         </div>
-        <Line data={currentChartData} options={options} />
+        <div className="chart-size">
+          <Line data={currentChartData} options={options} />
+        </div>
       </div>
       <div className="value-cont">
         <div className="value-heading">Current Values</div>

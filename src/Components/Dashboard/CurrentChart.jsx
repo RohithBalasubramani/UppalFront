@@ -114,7 +114,7 @@ const RealTimeCurrentChart = () => {
         data: activeData.map((item) =>
           item.ebR > 0 ? item.ebR : item.dg1R > 0 ? item.dg1R : item.dg2R
         ),
-        borderColor: "rgba(255, 99, 132, 1)",
+        borderColor: "#D33030",
         borderWidth: 2,
         pointRadius: 0,
         pointHoverRadius: 0,
@@ -125,7 +125,7 @@ const RealTimeCurrentChart = () => {
         data: activeData.map((item) =>
           item.ebY > 0 ? item.ebY : item.dg1Y > 0 ? item.dg1Y : item.dg2Y
         ),
-        borderColor: "rgba(54, 162, 235, 1)",
+        borderColor: "#FFB319",
         borderWidth: 2,
         pointRadius: 0,
         pointHoverRadius: 0,
@@ -136,7 +136,7 @@ const RealTimeCurrentChart = () => {
         data: activeData.map((item) =>
           item.ebB > 0 ? item.ebB : item.dg1B > 0 ? item.dg1B : item.dg2B
         ),
-        borderColor: "rgba(255, 206, 86, 1)",
+        borderColor: "#017EF3",
         borderWidth: 2,
         pointRadius: 0,
         pointHoverRadius: 0,

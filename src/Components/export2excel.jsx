@@ -41,16 +41,22 @@ const ExportToExcelButton = ({
       "DD/MM/YYYY HH:mm:ss"
     );
 
-    // Extract column names dynamically based on the first data object
-    const columnNames = Object.keys(data[0]).filter(
-      (key) => key !== "timestamp" && key !== "id"
+    // Determine which columns have data (filter out empty columns)
+    const validColumns = Object.keys(data[0]).filter((key) =>
+      data.some(
+        (row) =>
+          row[key] !== "" &&
+          row[key] !== null &&
+          key !== "timestamp" &&
+          key !== "id"
+      )
     );
 
     // Format the data for export
     const formattedData = data.map((row) => {
       const formattedRow = {
         Timeseries: new Date(row.timestamp).toLocaleDateString("en-GB"),
-        ...columnNames.reduce((acc, key) => {
+        ...validColumns.reduce((acc, key) => {
           acc[key] = row[key] || "";
           return acc;
         }, {}),
@@ -62,8 +68,8 @@ const ExportToExcelButton = ({
 
     // Add merged cells for "From Datetime", "To Datetime"
     worksheet["!merges"] = [
-      { s: { r: 0, c: 1 }, e: { r: 0, c: columnNames.length + 1 } }, // Merge "From Datetime"
-      { s: { r: 1, c: 1 }, e: { r: 1, c: columnNames.length + 1 } }, // Merge "To Datetime"
+      { s: { r: 0, c: 1 }, e: { r: 0, c: validColumns.length + 1 } }, // Merge "From Datetime"
+      { s: { r: 1, c: 1 }, e: { r: 1, c: validColumns.length + 1 } }, // Merge "To Datetime"
     ];
 
     // Insert the header rows with the correct datetime values
@@ -72,7 +78,7 @@ const ExportToExcelButton = ({
       [
         ["From Datetime", formattedStartDatetime],
         ["To Datetime", formattedEndDatetime],
-        ["Timeseries", ...columnNames],
+        ["Timeseries", ...validColumns],
       ],
       { origin: "A1" }
     );

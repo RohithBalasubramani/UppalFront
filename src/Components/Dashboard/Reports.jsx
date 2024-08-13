@@ -11,12 +11,12 @@ import {
   Radio,
   FormControl,
   FormLabel,
-  TextField,
 } from "@mui/material";
 import TimeBar from "../TRFF/TimePeriod";
 import DateRangeSelector from "./Daterangeselector";
 import ToggleButtons from "./Togglesampling";
-import ExportToExcelButton from "../export2excel";
+import { exportToExcel } from "../exportToExcel"; // Import the utility function
+import "./EnergyComp.css"; // Import the CSS file
 
 const ReportModal = ({
   open,
@@ -34,33 +34,39 @@ const ReportModal = ({
   filename, // Pass filename for export
 }) => {
   const [dataType, setDataType] = useState("EB Power");
-  const [format, setFormat] = useState("PDF");
-  const [range, setRange] = useState("");
-
-  const handleDataTypeChange = (event) => {
-    setDataType(event.target.value);
-  };
+  const [format, setFormat] = useState("Excel");
 
   const handleFormatChange = (event) => {
     setFormat(event.target.value);
   };
 
-  const handleRangeChange = (event) => {
-    setRange(event.target.value);
-  };
-
   const handleSubmit = () => {
     if (format === "Excel") {
-      // Trigger the Excel export function
-      ExportToExcelButton({
-        data,
-        filename: filename || "table_report.xlsx",
+      if (!data || data.length === 0) {
+        console.warn("No data available for export.");
+        return;
+      }
+
+      // Round all numerical values in data to two decimal places
+      const roundedData = data.map((item) => {
+        return Object.fromEntries(
+          Object.entries(item).map(([key, value]) => [
+            key,
+            typeof value === "number" ? parseFloat(value.toFixed(2)) : value,
+          ])
+        );
+      });
+
+      // Trigger the Excel export function with rounded data
+      exportToExcel({
+        data: roundedData,
+        filename: filename || "Uppalreport.xlsx",
         startDatetime: startDate,
         endDatetime: endDate,
       });
     } else {
       // Handle PDF or other formats
-      onSubmit({ dataType, format, range });
+      onSubmit({ dataType, format });
     }
     onClose();
   };
@@ -111,14 +117,38 @@ const ReportModal = ({
             onChange={handleFormatChange}
             sx={{ display: "flex", flexDirection: "row" }}
           >
-            <FormControlLabel value="PDF" control={<Radio />} label="PDF" />
-            <FormControlLabel value="Excel" control={<Radio />} label="Excel" />
+            <FormControlLabel
+              className="styled-form-control-label"
+              value="PDF"
+              control={<Radio />}
+              label="PDF"
+            />
+            <FormControlLabel
+              className="styled-form-control-label"
+              value="Excel"
+              control={<Radio />}
+              label="Excel"
+            />
           </RadioGroup>
         </FormControl>
       </DialogContent>
       <DialogActions>
-        <Button onClick={onClose}>Cancel</Button>
-        <Button onClick={handleSubmit} color="primary">
+        <Button
+          className="button"
+          sx={{
+            background: "#ffffff",
+            color: "#1B2533",
+            border: "1px solid #C1C7D1",
+          }}
+          onClick={onClose}
+        >
+          Cancel
+        </Button>
+        <Button
+          onClick={handleSubmit}
+          sx={{ background: "#6036D4", color: "#ffffff" }}
+          className="button"
+        >
           Submit
         </Button>
       </DialogActions>

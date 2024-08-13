@@ -5,6 +5,7 @@ import { MobileDateTimePicker } from "@mui/x-date-pickers/MobileDateTimePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import DataTable from "../Components/Table";
+import { ReactComponent as DownloadIcon } from "../Assets/reporticon.svg";
 
 import DashboardLoader from "../Components/Dashboard/Loading";
 // import RealTimeChart from "../Components/TRFA/Composite";
@@ -25,6 +26,7 @@ import VoltageCurrent from "../Components/Feeders/BottomCharts";
 import CompositeChart from "../Components/Feeders/CompositeTime";
 import dayjs from "dayjs";
 import ExportToExcelButton from "../Components/export2excel";
+import ReportModal from "../Components/Dashboard/Reports";
 
 const Feeders = ({ source, heading }) => {
   const [selectedEndpoint, setSelectedEndpoint] = useState(heading);
@@ -36,6 +38,7 @@ const Feeders = ({ source, heading }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [dateRange, setDateRange] = useState("today");
   const [data, setData] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false); // State to control modal visibility
 
   const getEndpoint = (source) => {
     switch (source) {
@@ -69,6 +72,19 @@ const Feeders = ({ source, heading }) => {
   useEffect(() => {
     fetchData();
   }, [startDate, endDate, timeperiod, source]);
+
+  const handleGenerateReportClick = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleModalClose = () => {
+    setIsModalOpen(false);
+  };
+
+  const handleModalSubmit = (reportData) => {
+    // Handle the report data (dataType, format, range) as needed
+    console.log(reportData);
+  };
 
   const backgroundColors = [
     "rgba(255, 99, 132, 0.6)",
@@ -120,12 +136,12 @@ const Feeders = ({ source, heading }) => {
         </div>
 
         <a className="d-none d-sm-inline-block">
-          <ExportToExcelButton
-            data={data}
-            filename="table_report.xlsx"
-            startDatetime={startDate}
-            endDatetime={endDate}
-          />
+          <button onClick={handleGenerateReportClick} className="emsbutton">
+            <i className="emsbuttonicon">
+              <DownloadIcon />
+            </i>
+            <span>Generate Report</span>
+          </button>
         </a>
       </div>
 
@@ -197,6 +213,21 @@ const Feeders = ({ source, heading }) => {
           />
         )}
       </div>
+      <ReportModal
+        open={isModalOpen}
+        onClose={handleModalClose}
+        onSubmit={handleModalSubmit}
+        startDate={startDate}
+        setStartDate={setStartDate}
+        endDate={endDate}
+        setEndDate={setEndDate}
+        timeperiod={timeperiod}
+        setTimeperiod={setTimeperiod}
+        dateRange={dateRange}
+        setDateRange={setDateRange}
+        data={data ? data["resampled data"] : []}
+        filename={`${source}.xlsx`}
+      />
     </div>
   );
 };

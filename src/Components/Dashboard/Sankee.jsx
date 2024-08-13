@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import Plot from "react-plotly.js";
-import TimeBar from "../TRFF/TimePeriod"; // Ensure this path is correct
-import ToggleButtons from "./Togglesampling"; // Import the ToggleButtons component
-import DateRangeSelector from "./Daterangeselector"; // Import the DateRangeSelector component
-import "./StackedBarDGEB.css"; // Reuse the CSS file for styling
+import TimeBar from "../TRFF/TimePeriod";
+import ToggleButtons from "./Togglesampling";
+import DateRangeSelector from "./Daterangeselector";
+import "./StackedBarDGEB.css";
 
 const MySankeyChart = ({
   data,
@@ -25,19 +25,14 @@ const MySankeyChart = ({
     backgroundColors.length > 0
       ? backgroundColors
       : [
-          "rgba(66, 135, 245, 0.7)",
-          "rgba(245, 66, 152, 0.7)",
-          "rgba(66, 245, 134, 0.7)",
-          "rgba(245, 144, 66, 0.7)",
-          "rgba(174, 66, 245, 0.7)",
-          "rgba(245, 226, 66, 0.7)",
-          "rgba(66, 245, 233, 0.7)",
-          "rgba(66, 189, 245, 0.7)",
-          "rgba(245, 96, 66, 0.7)",
-          "rgba(66, 245, 182, 0.7)",
-          "rgba(116, 66, 245, 0.7)",
-          "rgba(245, 66, 66, 0.7)",
-          "rgba(66, 245, 135, 0.7)",
+          "rgba(237, 117, 163, 0.6)", // #ED75A3
+          "rgba(1, 126, 243, 0.6)", // #017EF3
+          "rgba(191, 114, 213, 0.6)", // #BF72D5
+          "rgba(240, 151, 115, 0.6)", // #F09773
+          "rgba(255, 197, 80, 0.6)", // #FFC550
+          "rgba(67, 67, 67, 0.6)", // #434343
+          "rgba(255, 77, 0, 0.6)", // #ff4d00
+          "rgba(201, 203, 207, 0.6)", // #C9CBCF
         ];
 
   useEffect(() => {
@@ -159,17 +154,22 @@ const MySankeyChart = ({
           {
             type: "sankey",
             orientation: "h",
+            borderRadius: "8px",
             node: {
               pad: 20,
               thickness: 30,
               line: {
-                color: "#444",
+                color: "rgba(86, 48, 188, 0.8)",
                 width: 1,
+                borderRadius: "8px",
               },
               label: nodes,
-              color: "rgba(0, 123, 255, 0.5)", // Duller node color
+              color: "rgba(86, 48, 188, 0.8)", // Duller node color
               hovertemplate:
                 "Node: %{label}<br>Total Flow: %{value}<extra></extra>", // Detailed tooltip for nodes
+              customdata: nodes.map(() => ({
+                borderRadius: "10px", // Custom property for CSS
+              })),
             },
             link: {
               source: links.map((link) => link.source),
@@ -183,7 +183,7 @@ const MySankeyChart = ({
                 width: 0.5,
                 curvature: 0.5, // Added curvature for smooth links
               },
-              opacity: 0.5, // Duller opacity for links
+              opacity: 0.8, // Duller opacity for links
             },
           },
         ]);

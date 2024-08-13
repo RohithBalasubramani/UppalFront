@@ -25,6 +25,8 @@ const VoltageCurrent = ({
   const [hiddenDatasets, setHiddenDatasets] = useState([]);
   const chartInstance = useRef(null);
 
+  console.log("resampled", data);
+
   useEffect(() => {
     if (data && data["resampled data"]) {
       try {
@@ -35,14 +37,44 @@ const VoltageCurrent = ({
           labels: xAxisLabels,
           datasets: [
             {
-              label: "Line Voltage",
+              label: "Ln Avg Voltage",
               data: resampledData.map((item) => item.ln_avg_voltage),
               fill: false,
-              borderColor: "rgba(75,192,192,1)",
-              borderWidth: 2, // Increased thickness
-              pointRadius: 3, // Increased point size
-              tension: 0.3, // Adjusted line tension for a smoother curve
-              hidden: hiddenDatasets.includes("Line Voltage"),
+              borderColor: "rgba(75,192,192,1)", // Same color as Phase 3 Current
+              borderWidth: 2,
+              pointRadius: 3,
+              tension: 0.3,
+              hidden: hiddenDatasets.includes("Ln Avg Voltage"),
+            },
+            {
+              label: "Rn Voltage",
+              data: resampledData.map((item) => item.rn_voltage),
+              fill: false,
+              borderColor: "rgba(54, 162, 235, 1)", // Same color as Phase 1 Current
+              borderWidth: 2,
+              pointRadius: 3,
+              tension: 0.3,
+              hidden: hiddenDatasets.includes("Rn Voltage"),
+            },
+            {
+              label: "Yn Voltage",
+              data: resampledData.map((item) => item.yn_voltage),
+              fill: false,
+              borderColor: "rgba(255, 206, 86, 1)", // Same color as Phase 2 Current
+              borderWidth: 2,
+              pointRadius: 3,
+              tension: 0.3,
+              hidden: hiddenDatasets.includes("Yn Voltage"),
+            },
+            {
+              label: "Bn Voltage",
+              data: resampledData.map((item) => item.bn_voltage),
+              fill: false,
+              borderColor: "rgba(255,99,132,1)", // Same color as Average Current
+              borderWidth: 2,
+              pointRadius: 3,
+              tension: 0.3,
+              hidden: hiddenDatasets.includes("Bn Voltage"),
             },
           ],
         };
@@ -55,9 +87,9 @@ const VoltageCurrent = ({
               data: resampledData.map((item) => item.avg_current),
               fill: false,
               borderColor: "rgba(255,99,132,1)",
-              borderWidth: 2, // Increased thickness
-              pointRadius: 3, // Increased point size
-              tension: 0.3, // Adjusted line tension for a smoother curve
+              borderWidth: 2,
+              pointRadius: 3,
+              tension: 0.3,
               hidden: hiddenDatasets.includes("Average Current"),
             },
             {
@@ -65,9 +97,9 @@ const VoltageCurrent = ({
               data: resampledData.map((item) => item.r_current),
               fill: false,
               borderColor: "rgba(54, 162, 235, 1)",
-              borderWidth: 2, // Increased thickness
-              pointRadius: 3, // Increased point size
-              tension: 0.3, // Adjusted line tension for a smoother curve
+              borderWidth: 2,
+              pointRadius: 3,
+              tension: 0.3,
               hidden: hiddenDatasets.includes("Phase 1 Current"),
             },
             {
@@ -75,9 +107,9 @@ const VoltageCurrent = ({
               data: resampledData.map((item) => item.y_current),
               fill: false,
               borderColor: "rgba(255, 206, 86, 1)",
-              borderWidth: 2, // Increased thickness
-              pointRadius: 3, // Increased point size
-              tension: 0.3, // Adjusted line tension for a smoother curve
+              borderWidth: 2,
+              pointRadius: 3,
+              tension: 0.3,
               hidden: hiddenDatasets.includes("Phase 2 Current"),
             },
             {
@@ -85,9 +117,9 @@ const VoltageCurrent = ({
               data: resampledData.map((item) => item.b_current),
               fill: false,
               borderColor: "rgba(75, 192, 192, 1)",
-              borderWidth: 2, // Increased thickness
-              pointRadius: 3, // Increased point size
-              tension: 0.3, // Adjusted line tension for a smoother curve
+              borderWidth: 2,
+              pointRadius: 3,
+              tension: 0.3,
               hidden: hiddenDatasets.includes("Phase 3 Current"),
             },
           ],
@@ -178,7 +210,7 @@ const VoltageCurrent = ({
           boxHeight: 15,
           padding: 20,
           font: {
-            size: 14,
+            size: 13,
             family: "DM Sans",
           },
           usePointStyle: true,

@@ -4,9 +4,8 @@ import { ToggleButton, ToggleButtonGroup } from "@mui/material";
 import { MobileDateTimePicker } from "@mui/x-date-pickers/MobileDateTimePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { useNavigate } from "react-router-dom"; // Import useNavigate for navigation
 import DataTable from "../Components/Table";
-import { ReactComponent as DownloadIcon } from "../Assets/reporticon.svg";
-
 import DashboardLoader from "../Components/Dashboard/Loading";
 import RealTimeChart from "../Components/TRFA/Composite";
 import RealTimeCurrentChart from "../Components/TRFA/CurrentRealtime";
@@ -20,9 +19,10 @@ import ChartAmfBottom from "../Components/PepplData/BottomCharts";
 import KPI from "../Components/TRFF/KPI";
 import dayjs from "dayjs";
 import ExportToExcelButton from "../Components/export2excel";
+import { ReactComponent as DownloadIcon } from "../Assets/reporticon.svg";
 import ReportModal from "../Components/Dashboard/Reports";
 
-const TRFA = ({ source, heading }) => {
+const DGpage = ({ source, heading }) => {
   const [selectedEndpoint, setSelectedEndpoint] = useState(heading);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
@@ -34,12 +34,35 @@ const TRFA = ({ source, heading }) => {
   const [data, setData] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false); // State to control modal visibility
 
+  const [alignment, setAlignment] = useState(source); // Add state for toggle button alignment
+  const navigate = useNavigate(); // useNavigate hook for routing
+
   const getEndpoint = (source) => {
     switch (source) {
-      case "eb":
-        return "https://www.therion.co.in/api/ebs10reading/";
+      case "dg1":
+        return "https://www.therion.co.in/api/dg1s12reading/";
+      case "dg2":
+        return "https://www.therion.co.in/api/dg2s3reading/";
       default:
         throw new Error("Invalid source");
+    }
+  };
+
+  const backgroundColors = [
+    "rgba(255, 99, 132, 0.6)",
+    "rgba(54, 162, 235, 0.6)",
+    "rgba(255, 206, 86, 0.6)",
+    "rgba(75, 192, 192, 0.6)",
+    "rgba(153, 102, 255, 0.6)",
+    "rgba(255, 159, 64, 0.6)",
+    "rgba(201, 203, 207, 0.6)",
+    "rgba(0, 123, 255, 0.6)",
+  ];
+
+  const handleToggleChange = (event, newAlignment) => {
+    if (newAlignment !== null) {
+      setAlignment(newAlignment);
+      navigate(`/${newAlignment}`); // Navigate to the corresponding DG page
     }
   };
 
@@ -54,21 +77,6 @@ const TRFA = ({ source, heading }) => {
   const handleModalSubmit = (reportData) => {
     // Handle the report data (dataType, format, range) as needed
     console.log(reportData);
-  };
-
-  const backgroundColors = [
-    "rgba(255, 99, 132, 0.6)",
-    "rgba(54, 162, 235, 0.6)",
-    "rgba(255, 206, 86, 0.6)",
-    "rgba(75, 192, 192, 0.6)",
-    "rgba(153, 102, 255, 0.6)",
-    "rgba(255, 159, 64, 0.6)",
-    "rgba(201, 203, 207, 0.6)",
-    "rgba(0, 123, 255, 0.6)",
-  ];
-
-  const handleChange = (event, newAlignment) => {
-    setTimeperiod(newAlignment);
   };
 
   useEffect(() => {
@@ -123,6 +131,46 @@ const TRFA = ({ source, heading }) => {
         </a>
       </div>
 
+      {/* Add the ToggleButtonGroup */}
+      <ToggleButtonGroup
+        color="primary"
+        value={alignment}
+        exclusive
+        onChange={handleToggleChange}
+        aria-label="DG selection"
+        sx={{
+          backgroundColor: "#ffffff",
+          borderRadius: "24px",
+          height: "8vh",
+          marginBottom: "5vh",
+          gap: "0.5vw",
+          "& .MuiToggleButtonGroup-grouped": {
+            border: 0,
+            height: "8vh",
+            color: "var(--Gray---Typography-800, #1B2533)",
+            fontFeatureSettings: "'liga' off, 'clig' off",
+            fontFamily: '"DM Sans", sans-serif',
+            fontSize: "14px",
+            fontStyle: "normal",
+            fontWeight: 500,
+            textTransform: "capitalize",
+            lineHeight: "24px", // 171.429%
+
+            backgroundColor: "#ffffff",
+            borderRadius: "24px",
+            // Set border radius for toggle button group
+            "&.Mui-selected, &.Mui-selected:hover": {
+              backgroundColor: "#C4B1F7", // Set your custom selected background color
+              color: "#1A2027", // Set your custom selected text color
+              borderRadius: "24px", // Set border radius for selected button
+            },
+          },
+        }}
+      >
+        <ToggleButton value="dg1">Diesel Generator 1</ToggleButton>
+        <ToggleButton value="dg2">Diesel Generator 2</ToggleButton>
+      </ToggleButtonGroup>
+
       <KPI data={data} />
 
       <div className="emstit">
@@ -131,17 +179,20 @@ const TRFA = ({ source, heading }) => {
       </div>
 
       <div className="realtimeflex">
-        <RealTimeChart source={source} />
-        <RealTimeCurrentChart source={source} />
-        <RealTimeVoltageChart source={source} />
+        <RealTimeChart
+          source={source}
+          // Set border radius for real-time chart
+        />
+        <RealTimeCurrentChart
+          source={source}
+          // Set border radius for real-time current chart
+        />
+        <RealTimeVoltageChart
+          source={source}
+          // Set border radius for real-time voltage chart
+        />
       </div>
 
-      {/* <div>
-        <div className="row">
-          <div className="col-lg-6 mb-4" style={{ height: "500px" }}></div>
-          <div className="col-lg-6 mb-4" style={{ height: "500px" }}></div>
-        </div>
-      </div> */}
       <div className="emstit">
         <span className="emstitle">Energy Consumption History</span>
         <span className="emsspan">
@@ -161,6 +212,7 @@ const TRFA = ({ source, heading }) => {
         dateRange={dateRange}
         setDateRange={setDateRange}
         backgroundColors={backgroundColors}
+        // Set border radius for composite chart
       />
       <VoltageCurrent
         data={data}
@@ -173,27 +225,17 @@ const TRFA = ({ source, heading }) => {
         dateRange={dateRange}
         setDateRange={setDateRange}
         backgroundColors={backgroundColors}
+        // Set border radius for voltage/current chart
       />
-      {/* <Powercut data={data} /> */}
-      {/* <ChartAmf
-            data={data?.results || []}
-            setTimeperiod={setTimeperiod}
-            timeperiod={timeperiod}
-          />
-          <ChartAmfBottom
-            data={data?.results || []}
-            setTimeperiod={setTimeperiod}
-            timeperiod={timeperiod}
-          /> */}
 
-      <div style={{ marginTop: "5vh" }}>
+      <div style={{ marginTop: "5vh", borderRadius: "24px" }}>
         {data && (
           <DataTable
-            tablesData={data["resampled data"]} // Pass the correct data subset
+            tablesData={data["resampled data"]}
             orderBy=""
             order="asc"
             handleRequestSort={() => {}}
-            sortedData={data["resampled data"]} // Ensure sorted data is correct
+            sortedData={data["resampled data"]}
             rowsPerPage={10}
             handleChangePage={() => {}}
             handleChangeRowsPerPage={() => {}}
@@ -206,7 +248,7 @@ const TRFA = ({ source, heading }) => {
             setTimeperiod={setTimeperiod}
             dateRange={dateRange}
             setDateRange={setDateRange}
-            filename={`${source}.xlsx`}
+            // Set border radius for data table
           />
         )}
       </div>
@@ -223,10 +265,10 @@ const TRFA = ({ source, heading }) => {
         dateRange={dateRange}
         setDateRange={setDateRange}
         data={data ? data["resampled data"] : []}
-        filename="datatable.xlsx"
+        filename={`${source}.xlsx`} // Correctly use template literals here
       />
     </div>
   );
 };
 
-export default TRFA;
+export default DGpage;

@@ -82,15 +82,15 @@
 
 /* Specific Colors for Legend */
 .legend-color-box.v1 {
-  background-color: rgba(255, 99, 132, 1);
+  background-color: #d33030;
 }
 
 .legend-color-box.v2 {
-  background-color: rgba(54, 162, 235, 1);
+  background-color: #017ef3;
 }
 
 .legend-color-box.v3 {
-  background-color: rgba(255, 206, 86, 1);
+  background-color: #ffb319;
 }
 
 .legend-color-box.ln {

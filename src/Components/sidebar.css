@@ -38,7 +38,7 @@
 .sidebar .sidebar-brand-text {
   color: var(--Gray---Typography-800, #1b2533);
   font-feature-settings: "liga" off, "clig" off;
-  font-family: "Red Hat Display";
+  font-family: "DM Sans";
   font-size: 24px;
   font-style: normal;
   font-weight: 700;
@@ -50,7 +50,7 @@
   color: #697483 !important;
 
   font-feature-settings: "liga" off, "clig" off;
-  font-family: "Red Hat Display";
+  font-family: "DM Sans";
   font-size: 24px;
   font-style: normal;
   font-weight: 700;
@@ -94,6 +94,18 @@
   color: #697483 !important;
 }
 
+.sidebar-tit {
+  color: #697483 !important;
+  color: var(--Gray---Typography-800, #1b2533);
+  font-feature-settings: "liga" off, "clig" off;
+  font-family: "DM sans";
+  font-size: 24px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 20px; /* 83.333% */
+  letter-spacing: -1px;
+}
+
 .sidebar-heading {
   color: #697483 !important;
 }
@@ -121,7 +133,7 @@
   color: #ffffff !important;
   background: #6b3ceb;
 }
-state */ .nav-link:hover {
+.nav-link:hover {
   color: #1b2533;
   text-align: center;
   font-feature-settings: "liga" off, "clig" off;

@@ -19,6 +19,7 @@ import RealTimeVoltageChart from "./Dashboard/VoltageChart";
 import BottomTimeSeries from "./Dashboard/TimeseriesDash";
 import { ReactComponent as DownloadIcon } from "../Assets/reporticon.svg";
 import ReportModal from "./Dashboard/Reports";
+import { Badge } from "@mui/material";
 // Import the modal component
 
 const RealTime = styled.div`
@@ -125,6 +126,7 @@ const DashboardPage = () => {
             <span className="emstitle">Dashboard</span>
             <span className="emsspan">Overview of Building Energy Usage</span>
           </div>
+
           <button onClick={handleGenerateReportClick} className="emsbutton">
             <i className="emsbuttonicon">
               <DownloadIcon />
@@ -182,8 +184,8 @@ const DashboardPage = () => {
         setTimeperiod={setTimeperiod}
         dateRange={dateRange}
         setDateRange={setDateRange}
-        data={data}
-        filename="datatable.xlsx"
+        data={data ? data["resampled data"] : []}
+        filename="M2TotalReport.xlsx"
       />
     </div>
   );

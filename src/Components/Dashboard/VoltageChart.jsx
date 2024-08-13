@@ -105,7 +105,7 @@ const RealTimeVoltageChart = () => {
         data: activeData.map((item) =>
           item.ebV1 > 0 ? item.ebV1 : item.dg1V1 > 0 ? item.dg1V1 : item.dg2V1
         ),
-        borderColor: "rgba(255, 99, 132, 1)",
+        borderColor: "#D33030",
         borderWidth: 2,
         pointRadius: 0,
         pointHoverRadius: 0,
@@ -116,7 +116,7 @@ const RealTimeVoltageChart = () => {
         data: activeData.map((item) =>
           item.ebV2 > 0 ? item.ebV2 : item.dg1V2 > 0 ? item.dg1V2 : item.dg2V2
         ),
-        borderColor: "rgba(54, 162, 235, 1)",
+        borderColor: "#FFB319",
         borderWidth: 2,
         pointRadius: 0,
         pointHoverRadius: 0,
@@ -127,7 +127,7 @@ const RealTimeVoltageChart = () => {
         data: activeData.map((item) =>
           item.ebV3 > 0 ? item.ebV3 : item.dg1V3 > 0 ? item.dg1V3 : item.dg2V3
         ),
-        borderColor: "rgba(255, 206, 86, 1)",
+        borderColor: "#017EF3",
         borderWidth: 2,
         pointRadius: 0,
         pointHoverRadius: 0,

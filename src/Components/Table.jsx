@@ -11,15 +11,9 @@ import {
 } from "@mui/material";
 import styled from "styled-components";
 import FilterListIcon from "@mui/icons-material/FilterList";
-// import TimeBar from "./Dashboard/TimePeriod"; // Update the path accordingly
 import ToggleButtons from "./Dashboard/Togglesampling"; // Update the path accordingly
 import DateRangeSelector from "./Dashboard/Daterangeselector"; // Update the path accordingly
 import TimeBar from "./TRFF/TimePeriod";
-import html2canvas from "html2canvas";
-import { jsPDF } from "jspdf";
-import { ReactComponent as DownloadIcon } from "../Assets/reporticon.svg";
-import ReportModal from "./Dashboard/Reports"; // Import the modal component
-import * as XLSX from "xlsx";
 import ExportToExcelButton from "./export2excel";
 
 // Styled components for table design
@@ -45,9 +39,8 @@ const StyledTableCell = styled(TableCell)`
   position: relative;
   border-right: none;
   border-left: none;
-  width: 150px; /* Set a constant width for all columns */
+  width: 150px;
 
-  /* Add border to all cells */
   &:before {
     content: "";
     position: absolute;
@@ -60,7 +53,7 @@ const StyledTableCell = styled(TableCell)`
 
   &:first-child {
     &:before {
-      display: none; /* Remove the border for the first cell in the row */
+      display: none;
     }
   }
 
@@ -79,7 +72,7 @@ const StyledTableHeader = styled(TableCell)`
   border-right: 1px solid #e0e0e0;
   padding: 16px 24px;
   border-bottom: 0px solid #ffffff;
-  width: 150px; /* Set the same constant width for header columns */
+  width: 150px;
 
   &:first-child {
     border-top-left-radius: 8px;
@@ -202,6 +195,7 @@ const HeaderTitle = styled.h6`
 const FilterDropdown = styled.div`
   position: relative;
   display: inline-block;
+  width: 10vw;
 `;
 
 const FilterButton = styled.button`
@@ -216,6 +210,7 @@ const FilterButton = styled.button`
   padding: 4px 8px;
   cursor: pointer;
   transition: background-color 0.3s ease;
+  width: 10vw;
   &:hover {
     background-color: #f0f0f0;
   }
@@ -297,18 +292,25 @@ const DataTable = ({
     }));
   };
 
-  console.log("Startdata", tablesData);
-
   const toggleFilter = () => {
     setShowFilter(!showFilter);
   };
 
-  const filteredRows = sortedData.filter((row) => {
-    return Object.entries(row).some(([column, value]) => {
-      if (!visibleColumns[column]) return false;
-      return String(value).toLowerCase().includes("");
+  const filteredRows = sortedData
+    .map((row) => {
+      const roundedRow = {};
+      Object.entries(row).forEach(([key, value]) => {
+        if (key !== "id" && visibleColumns[key]) {
+          roundedRow[key] = roundToTwo(value);
+        }
+      });
+      return roundedRow;
+    })
+    .filter((row) => {
+      return Object.entries(row).some(([column, value]) => {
+        return String(value).toLowerCase().includes("");
+      });
     });
-  });
 
   const sortedRows = filteredRows.slice().sort((a, b) => {
     if (b[sortColumn] < a[sortColumn]) {
@@ -396,6 +398,18 @@ const DataTable = ({
     handleChangePage(event, newPage);
   };
 
+  const filteredColumns = Object.keys(tablesData[0] || {}).filter(
+    (column) => visibleColumns[column] && column !== "id"
+  );
+
+  const roundedRowsForExport = filteredRows.map((row) => {
+    const roundedRow = {};
+    filteredColumns.forEach((column) => {
+      roundedRow[column] = row[column];
+    });
+    return roundedRow;
+  });
+
   return (
     <>
       <div className="stacked-bar-container">
@@ -451,19 +465,17 @@ const DataTable = ({
                 <StyledTable>
                   <TableHead>
                     <TableRow>
-                      {Object.keys(tablesData[0])
-                        .filter((column) => visibleColumns[column])
-                        .map((header) => (
-                          <StyledTableHeader key={header}>
-                            <StyledTableSortLabel
-                              active={sortColumn === header}
-                              direction={sortOrder}
-                              onClick={() => handleSortRequest(header)}
-                            >
-                              {header}
-                            </StyledTableSortLabel>
-                          </StyledTableHeader>
-                        ))}
+                      {filteredColumns.map((header) => (
+                        <StyledTableHeader key={header}>
+                          <StyledTableSortLabel
+                            active={sortColumn === header}
+                            direction={sortOrder}
+                            onClick={() => handleSortRequest(header)}
+                          >
+                            {header}
+                          </StyledTableSortLabel>
+                        </StyledTableHeader>
+                      ))}
                     </TableRow>
                   </TableHead>
                   <TableBody>
@@ -474,44 +486,38 @@ const DataTable = ({
                       )
                       .map((row, rowIndex) => (
                         <StyledTableRow key={rowIndex}>
-                          {Object.entries(row)
-                            .filter(([key]) => visibleColumns[key])
-                            .map(([key, value], cellIndex) => (
-                              <StyledTableCell key={cellIndex}>
-                                {key === "timestamp"
-                                  ? new Date(value).toLocaleString()
-                                  : value}
-                              </StyledTableCell>
-                            ))}
+                          {filteredColumns.map((column) => (
+                            <StyledTableCell key={column}>
+                              {column === "timestamp"
+                                ? new Date(row[column]).toLocaleString()
+                                : row[column]}
+                            </StyledTableCell>
+                          ))}
                         </StyledTableRow>
                       ))}
                   </TableBody>
                 </StyledTable>
-                <PaginationContainer>
-                  <PageButton
-                    onClick={(event) =>
-                      handleChangePageInternal(event, page - 1)
-                    }
-                    disabled={page === 0}
-                  >
-                    ← Previous
-                  </PageButton>
-                  <PageIndicator>{renderPageNumbers()}</PageIndicator>
-                  <PageButton
-                    onClick={(event) =>
-                      handleChangePageInternal(event, page + 1)
-                    }
-                    disabled={page >= totalPages - 1}
-                  >
-                    Next →
-                  </PageButton>
-                </PaginationContainer>
               </div>
             </StyledTableContainer>
+            <PaginationContainer>
+              <PageButton
+                onClick={(event) => handleChangePageInternal(event, page - 1)}
+                disabled={page === 0}
+              >
+                ← Previous
+              </PageButton>
+              <PageIndicator>{renderPageNumbers()}</PageIndicator>
+              <PageButton
+                onClick={(event) => handleChangePageInternal(event, page + 1)}
+                disabled={page >= totalPages - 1}
+              >
+                Next →
+              </PageButton>
+            </PaginationContainer>
           </div>
           <div className="d-flex justify-content-end mb-4">
             <ExportToExcelButton
-              data={tablesData}
+              data={roundedRowsForExport} // Pass the rounded rows without the `id` column
               filename="table_report.xlsx"
               startDatetime={startDate}
               endDatetime={endDate}

@@ -24,7 +24,7 @@ const FixedSidebar = styled.div`
 const FixedTopBar = styled.div`
   /* Adjust based on your sidebar width */
 
-  margin-top: 10vh;
+  margin-top: 11vh;
 `;
 
 const ContentWrapper = styled.div`

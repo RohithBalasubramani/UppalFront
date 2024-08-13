@@ -5,6 +5,7 @@ import styled from "styled-components";
 import { ArrowUpward, Launch } from "@mui/icons-material";
 import { IconButton } from "@mui/material";
 import PowerFactorGauge from "./PowerFactor";
+import { Link } from "react-router-dom";
 
 // Styled components for layout and styling
 const Container = styled.div`
@@ -84,7 +85,12 @@ const AMFgauge = () => {
         <div className="kpi-top">
           <Top>
             <Title>Total EB Usage</Title>
-            <IconButton aria-label="open-link" size="small">
+            <IconButton
+              aria-label="open-link"
+              size="small"
+              component={Link}
+              to="/eb"
+            >
               <Launch fontSize="inherit" />
             </IconButton>
           </Top>
@@ -121,7 +127,12 @@ const AMFgauge = () => {
         <div className="kpi-top">
           <Top>
             <Title>Total DG Usage</Title>
-            <IconButton aria-label="open-link" size="small">
+            <IconButton
+              aria-label="open-link"
+              size="small"
+              component={Link}
+              to="/dg1"
+            >
               <Launch fontSize="inherit" />
             </IconButton>
           </Top>

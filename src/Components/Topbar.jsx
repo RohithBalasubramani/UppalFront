@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { Link } from "react-router-dom";
 import SearchIcon from "@mui/icons-material/Search";
 import NotificationsIcon from "@mui/icons-material/Notifications";
-import { Avatar, IconButton } from "@mui/material";
+import { Avatar, Badge, IconButton } from "@mui/material";
 import AlertPanel from "./Alert";
 import { NotificationsOutlined } from "@mui/icons-material";
 
@@ -160,10 +160,20 @@ const Topbar = () => {
 
         <TopbarMenu>
           <TopbarItem>
-            <AlertsButton onClick={handleAlertButtonClick}>
-              <NotificationsOutlined fontSize="small" />
-              Alerts
-            </AlertsButton>
+            <Badge
+              badgeContent={3}
+              sx={{
+                "& .MuiBadge-badge": {
+                  backgroundColor: "#5630BC", // Custom secondary color
+                  color: "white", // Color of the text in the badge
+                },
+              }}
+            >
+              <AlertsButton onClick={handleAlertButtonClick}>
+                <NotificationsOutlined fontSize="small" />
+                Alerts
+              </AlertsButton>
+            </Badge>
           </TopbarItem>
           <TopbarItem>
             <IconButton>

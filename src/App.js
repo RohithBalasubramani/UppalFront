@@ -18,6 +18,7 @@ import PCC1 from "./Pages/PCC1";
 import OG2 from "./Pages/OG2";
 import AMFDifference from "./Pages/AMFDIff";
 import Feeders from "./Pages/Feeders";
+import DGpage from "./Pages/DG";
 
 const apiEndpoints = {
   cellltpanel1data: "https://sneems.org/pcc1/api/cellltpanel1data/",
@@ -90,11 +91,11 @@ const App = () => {
           />
           <Route
             path="/dg1"
-            element={<TRFA source={"dg1"} heading={"Diesel Generator 1"} />}
+            element={<DGpage source={"dg1"} heading={"Diesel Generator 1"} />}
           />
           <Route
             path="/dg2"
-            element={<TRFA source={"dg2"} heading={"Diesel Generator 2"} />}
+            element={<DGpage source={"dg2"} heading={"Diesel Generator 2"} />}
           />
 
           <Route

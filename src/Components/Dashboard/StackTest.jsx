@@ -30,8 +30,8 @@ const StackedBarDGEB = ({
 
         // Define the keys to include manually and their custom labels
         const kwKeys = [
-          { key: "DG1S12Reading_kw", label: "Diesel Generator 1" },
           { key: "EBS10Reading_kw", label: "EB Supply" },
+          { key: "DG1S12Reading_kw", label: "Diesel Generator 1" },
           { key: "DG2S3Reading_kw", label: "Diesel Generator 2" },
         ];
 

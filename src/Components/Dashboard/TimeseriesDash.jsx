@@ -8,7 +8,7 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import TimeBar from "../TRFF/TimePeriod"; // Ensure this path is correct
 import DonutChart from "./DonutDash";
 import StackedBarChart from "./StackedChart";
-import Powercut from "./Powercuts";
+import PowerOutageChart from "./Powercuts";
 import StackedBarDGEB from "./StackTest";
 import MySankeyChart from "./Sankee";
 import EnergyComp from "./EnergyPage";
@@ -23,7 +23,7 @@ const BottomTimeSeries = () => {
   // Initialize state with default values
   const [startDate, setStartDate] = useState(dayjs().startOf("day"));
   const [endDate, setEndDate] = useState(dayjs());
-  const [timeperiod, setTimeperiod] = useState("D");
+  const [timeperiod, setTimeperiod] = useState("H");
   const [dateRange, setDateRange] = useState("month");
   const [data, setData] = useState(null);
 
@@ -65,6 +65,17 @@ const BottomTimeSeries = () => {
     "#434343",
     "#ff4d00",
     "#C9CBCF",
+  ];
+
+  const backgroundColorsWithOpacity = [
+    "rgba(237, 117, 163, 0.8)", // #ED75A3
+    "rgba(1, 126, 243, 0.8)", // #017EF3
+    "rgba(191, 114, 213, 0.8)", // #BF72D5
+    "rgba(240, 151, 115, 0.8)", // #F09773
+    "rgba(255, 197, 80, 0.8)", // #FFC550
+    "rgba(67, 67, 67, 0.8)", // #434343
+    "rgba(255, 77, 0, 0.8)", // #ff4d00
+    "rgba(201, 203, 207, 0.8)", // #C9CBCF
   ];
 
   const backgroundColors2 = [
@@ -182,23 +193,21 @@ const BottomTimeSeries = () => {
           <div>
             <div className="row">
               <div className="col-lg-6 mb-4" style={{}}>
-                <div>
-                  <EnergyComp
-                    data={data}
-                    dateRange={dateRange}
-                    setDateRange={setDateRange}
-                    startDate={startDate}
-                    setStartDate={setStartDate}
-                    endDate={endDate}
-                    setEndDate={setEndDate}
-                    timeperiod={timeperiod}
-                    setTimeperiod={setTimeperiod}
-                  />
-                </div>
+                <EnergyComp
+                  data={data}
+                  dateRange={dateRange}
+                  setDateRange={setDateRange}
+                  startDate={startDate}
+                  setStartDate={setStartDate}
+                  endDate={endDate}
+                  setEndDate={setEndDate}
+                  timeperiod={timeperiod}
+                  setTimeperiod={setTimeperiod}
+                />
               </div>
-              {/* <div className="col-lg-4 mb-4">
-                <WeatherWidget className="col-xl-4" />
-              </div> */}
+              <div className="col-lg-6 mb-4">
+                <PowerOutageChart />
+              </div>
             </div>
           </div>
 
@@ -212,6 +221,7 @@ const BottomTimeSeries = () => {
             setEndDate={setEndDate}
             timeperiod={timeperiod}
             setTimeperiod={setTimeperiod}
+            backgroundColors={backgroundColorsWithOpacity}
           />
 
           <div style={{ marginTop: "5vh" }}>
