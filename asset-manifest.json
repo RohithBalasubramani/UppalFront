@@ -1,7 +1,7 @@
 {
   "files": {
-    "main.css": "/UppalFront/static/css/main.fbcd0a4b.css",
-    "main.js": "/UppalFront/static/js/main.b197cbc4.js",
+    "main.css": "/UppalFront/static/css/main.70585633.css",
+    "main.js": "/UppalFront/static/js/main.9df4b0d3.js",
     "static/js/703.6e6cc7ec.chunk.js": "/UppalFront/static/js/703.6e6cc7ec.chunk.js",
     "static/js/513.5f6c4063.chunk.js": "/UppalFront/static/js/513.5f6c4063.chunk.js",
     "static/js/787.9e9f4ffd.chunk.js": "/UppalFront/static/js/787.9e9f4ffd.chunk.js",
@@ -10,14 +10,14 @@
     "static/media/logo.png": "/UppalFront/static/media/logo.e99d13e3a8df21039072.png",
     "static/media/reporticon.svg": "/UppalFront/static/media/reporticon.4501e9a7e07d8b6095e4389129a55da2.svg",
     "index.html": "/UppalFront/index.html",
-    "main.fbcd0a4b.css.map": "/UppalFront/static/css/main.fbcd0a4b.css.map",
-    "main.b197cbc4.js.map": "/UppalFront/static/js/main.b197cbc4.js.map",
+    "main.70585633.css.map": "/UppalFront/static/css/main.70585633.css.map",
+    "main.9df4b0d3.js.map": "/UppalFront/static/js/main.9df4b0d3.js.map",
     "703.6e6cc7ec.chunk.js.map": "/UppalFront/static/js/703.6e6cc7ec.chunk.js.map",
     "513.5f6c4063.chunk.js.map": "/UppalFront/static/js/513.5f6c4063.chunk.js.map",
     "787.9e9f4ffd.chunk.js.map": "/UppalFront/static/js/787.9e9f4ffd.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.fbcd0a4b.css",
-    "static/js/main.b197cbc4.js"
+    "static/css/main.70585633.css",
+    "static/js/main.9df4b0d3.js"
   ]
 }
