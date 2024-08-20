@@ -248,6 +248,7 @@ const DGpage = ({ source, heading }) => {
             setTimeperiod={setTimeperiod}
             dateRange={dateRange}
             setDateRange={setDateRange}
+            source={source}
             // Set border radius for data table
           />
         )}
@@ -265,6 +266,7 @@ const DGpage = ({ source, heading }) => {
         dateRange={dateRange}
         setDateRange={setDateRange}
         data={data ? data["resampled data"] : []}
+        source={source}
         filename={`${source}.xlsx`} // Correctly use template literals here
       />
     </div>

@@ -20,8 +20,9 @@ import BottomTimeSeries from "./Dashboard/TimeseriesDash";
 import { ReactComponent as DownloadIcon } from "../Assets/reporticon.svg";
 import ReportModal from "./Dashboard/Reports";
 import { Badge } from "@mui/material";
-// Import the modal component
+import dayjs from "dayjs";
 
+// Styled components
 const RealTime = styled.div`
   display: flex;
   flex-direction: column;
@@ -39,39 +40,91 @@ const PFDiv = styled.div`
 `;
 
 const DashboardPage = () => {
-  const [startDate, setStartDate] = useState(null);
-  const [endDate, setEndDate] = useState(null);
-  const [timeperiod, setTimeperiod] = useState("W");
-  const [isLoading, setIsLoading] = useState(false); // State to track loading status
-  const [tablesData, setTablesData] = useState([]);
+  const [startDate, setStartDate] = useState(dayjs().startOf("day"));
+  const [endDate, setEndDate] = useState(dayjs());
+  const [timeperiod, setTimeperiod] = useState("H");
+  const [isLoading, setIsLoading] = useState(false);
+  const [reportData, setReportData] = useState([]);
   const [data, setData] = useState(null);
-  const [isModalOpen, setIsModalOpen] = useState(false); // State to control modal visibility
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [dateRange, setDateRange] = useState("today");
+
+  // Data transformation logic
+  const transformData = (tablesData) => {
+    return tablesData.map((row) => {
+      const transformedRow = {};
+      Object.entries(row).forEach(([key, value]) => {
+        if (!key.includes("_kwh") && key !== "id") {
+          switch (key) {
+            case "APFCS11Reading_kw":
+              transformedRow["APFC(Kwh)"] = value;
+              break;
+            case "DG1S12Reading_kw":
+              transformedRow["DG1(Kwh)"] = value;
+              break;
+            case "DG2S3Reading_kw":
+              transformedRow["DG2(Kwh)"] = value;
+              break;
+            case "EBS10Reading_kw":
+              transformedRow["EB(Kwh)"] = value;
+              break;
+            case "Utility1st2ndFS2Reading_kw_eb":
+              transformedRow["Utility EB(Wh)"] = value;
+              break;
+            case "ThirdFloorZohoS4Reading_kw_eb":
+              transformedRow["Zoho EB(Wh)"] = value;
+              break;
+            case "Skyd1Reading_kw_eb":
+              transformedRow["Skyde EB(Wh)"] = value;
+              break;
+            case "ThirdFifthFloorKotakReading_kw_eb":
+              transformedRow["Kotak EB(Wh)"] = value;
+              break;
+            case "SpareStation3Reading_kw_eb":
+              transformedRow["Spare-3 EB(Wh)"] = value;
+              break;
+            case "SpareS6Reading_kw_eb":
+              transformedRow["Spare-6 EB(Wh)"] = value;
+              break;
+
+            case "SpareS7Reading_kw_eb":
+              transformedRow["Spare-7 EB(Wh)"] = value;
+              break;
+            case "SixthFloorS5Reading_kw_eb":
+              transformedRow["Sixth Floor EB(Wh)"] = value;
+              break;
+            case "SolarS13Reading_kw":
+              transformedRow["Solar(Kwh)"] = value;
+              break;
+            default:
+              transformedRow[key] = value;
+              break;
+          }
+        }
+      });
+      return transformedRow;
+    });
+  };
 
   useEffect(() => {
     fetchData();
+    fetchData2(startDate, endDate, timeperiod);
   }, [startDate, endDate, timeperiod]);
 
   const fetchData = async () => {
     setIsLoading(true);
     try {
-      // Get current date
       const today = new Date();
-
-      // Set start date to the first day of the current month
       const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
-
-      // Set start and end dates in ISO format
       const startDateISO = startOfMonth.toISOString();
       const endDateISO = today.toISOString();
 
-      // Use dynamic dates for API request
       const endpoint = "https://www.therion.co.in/analytics/api/timeserieslog/";
       const response = await axios.get(endpoint, {
         params: {
           start_date_time: startDateISO,
           end_date_time: endDateISO,
-          resample_period: timeperiod,
+          resample_period: "W",
         },
       });
 
@@ -80,6 +133,19 @@ const DashboardPage = () => {
       console.error("Error fetching data:", error);
     }
     setIsLoading(false);
+  };
+
+  const fetchData2 = async (start, end, period) => {
+    try {
+      const response = await fetch(
+        `https://www.therion.co.in/analytics/api/timeserieslog/?start_date_time=${start.toISOString()}&end_date_time=${end.toISOString()}&resample_period=${period}`
+      );
+      const result = await response.json();
+      const transformedData = transformData(result["resampled data"]); // Fixed transformation
+      setReportData(transformedData);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
   };
 
   const handleDownloadPdf = async () => {
@@ -104,9 +170,9 @@ const DashboardPage = () => {
     setIsModalOpen(false);
   };
 
-  const handleModalSubmit = (reportData) => {
-    // Handle the report data (dataType, format, range) as needed
-    console.log(reportData);
+  const handleModalSubmit = (formData) => {
+    console.log("Report Data Submitted:", formData);
+    // You can process or save the data here
   };
 
   if (isLoading) {
@@ -120,7 +186,6 @@ const DashboardPage = () => {
   return (
     <div>
       <div className="container-fluid">
-        {/* Page Heading */}
         <div className="d-sm-flex align-items-center justify-content-between mb-4">
           <div className="emstit">
             <span className="emstitle">Dashboard</span>
@@ -135,8 +200,6 @@ const DashboardPage = () => {
           </button>
         </div>
         <div className="report">
-          {/* Content Row */}
-
           <div className="row">
             <div className="col-lg-8 mb-4">
               <div>
@@ -150,8 +213,6 @@ const DashboardPage = () => {
               </div>
             </div>
           </div>
-
-          {/* Content Row */}
           <div className="emstit">
             <span className="emstitle">Real - Time Consumption</span>
             <span className="emsspan">Status: Running EB power</span>
@@ -168,7 +229,6 @@ const DashboardPage = () => {
               identify patterns and areas for improvement.
             </span>
           </div>
-
           <BottomTimeSeries />
         </div>
       </div>
@@ -184,7 +244,7 @@ const DashboardPage = () => {
         setTimeperiod={setTimeperiod}
         dateRange={dateRange}
         setDateRange={setDateRange}
-        data={data ? data["resampled data"] : []}
+        data={reportData} // Pass the processed reportData directly
         filename="M2TotalReport.xlsx"
       />
     </div>

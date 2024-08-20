@@ -24,7 +24,7 @@ const BottomTimeSeries = () => {
   const [startDate, setStartDate] = useState(dayjs().startOf("day"));
   const [endDate, setEndDate] = useState(dayjs());
   const [timeperiod, setTimeperiod] = useState("H");
-  const [dateRange, setDateRange] = useState("month");
+  const [dateRange, setDateRange] = useState("today");
   const [data, setData] = useState(null);
 
   // Function to fetch data

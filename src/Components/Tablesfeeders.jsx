@@ -309,7 +309,9 @@ const DataTable = ({
         roundedRow[key] =
           key === "timestamp"
             ? new Date(value).toLocaleString()
-            : roundToTwo(value);
+            : key.toLowerCase().includes("kw")
+            ? roundToTwo(value / 1000)
+            : roundToTwo(value); // Apply the conversion for "kw" columns
       }
     });
     return roundedRow;

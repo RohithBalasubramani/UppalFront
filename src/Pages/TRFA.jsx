@@ -206,7 +206,7 @@ const TRFA = ({ source, heading }) => {
             setTimeperiod={setTimeperiod}
             dateRange={dateRange}
             setDateRange={setDateRange}
-            filename={`${source}.xlsx`}
+            source={source}
           />
         )}
       </div>
@@ -223,7 +223,8 @@ const TRFA = ({ source, heading }) => {
         dateRange={dateRange}
         setDateRange={setDateRange}
         data={data ? data["resampled data"] : []}
-        filename="datatable.xlsx"
+        filename={`${source}.xlsx`}
+        source={source}
       />
     </div>
   );

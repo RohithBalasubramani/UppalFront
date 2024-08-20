@@ -1,5 +1,5 @@
 {
-  "homepage": "https://therion.in/",
+  "homepage": "https://rohithbalasubramani.github.io/UppalFront/",
   "name": "frontend",
   "version": "0.1.0",
   "private": true,
@@ -24,6 +24,8 @@
     "d3": "^7.9.0",
     "date-fns": "^3.6.0",
     "dayjs": "^1.11.10",
+    "exceljs": "^4.4.0",
+    "file-saver": "^2.0.5",
     "gh-pages": "^6.1.1",
     "highcharts": "^11.4.1",
     "highcharts-react-official": "^3.2.1",

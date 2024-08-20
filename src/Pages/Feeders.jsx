@@ -4,7 +4,7 @@ import { ToggleButton, ToggleButtonGroup } from "@mui/material";
 import { MobileDateTimePicker } from "@mui/x-date-pickers/MobileDateTimePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import DataTable from "../Components/Table";
+import DataTable from "../Components/Tablesfeeders";
 import { ReactComponent as DownloadIcon } from "../Assets/reporticon.svg";
 
 import DashboardLoader from "../Components/Dashboard/Loading";
@@ -210,6 +210,7 @@ const Feeders = ({ source, heading }) => {
             setTimeperiod={setTimeperiod}
             dateRange={dateRange}
             setDateRange={setDateRange}
+            source={source}
           />
         )}
       </div>
@@ -227,6 +228,7 @@ const Feeders = ({ source, heading }) => {
         setDateRange={setDateRange}
         data={data ? data["resampled data"] : []}
         filename={`${source}.xlsx`}
+        source={source}
       />
     </div>
   );

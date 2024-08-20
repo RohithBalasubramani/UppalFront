@@ -32,6 +32,7 @@ const ReportModal = ({
   setDateRange,
   data, // Pass data for export
   filename, // Pass filename for export
+  source,
 }) => {
   const [dataType, setDataType] = useState("EB Power");
   const [format, setFormat] = useState("Excel");
@@ -60,9 +61,10 @@ const ReportModal = ({
       // Trigger the Excel export function with rounded data
       exportToExcel({
         data: roundedData,
-        filename: filename || "Uppalreport.xlsx",
+        filename: filename || `${source}.xlsx`,
         startDatetime: startDate,
         endDatetime: endDate,
+        source: source,
       });
     } else {
       // Handle PDF or other formats

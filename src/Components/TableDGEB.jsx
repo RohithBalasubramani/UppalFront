@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
   Table,
   TableBody,
@@ -8,15 +8,11 @@ import {
   TableRow,
   Paper,
   TableSortLabel,
-  Radio,
-  RadioGroup,
-  FormControlLabel,
-  FormControl,
 } from "@mui/material";
 import styled from "styled-components";
 import FilterListIcon from "@mui/icons-material/FilterList";
-import ToggleButtons from "./Dashboard/Togglesampling"; // Update the path accordingly
-import DateRangeSelector from "./Dashboard/Daterangeselector"; // Update the path accordingly
+import ToggleButtons from "./Dashboard/Togglesampling";
+import DateRangeSelector from "./Dashboard/Daterangeselector";
 import TimeBar from "./TRFF/TimePeriod";
 import ExportToExcelButton from "./export2excel";
 
@@ -73,6 +69,7 @@ const StyledTableHeader = styled(TableCell)`
   color: #445164;
   background-color: #d6dae1;
   text-transform: capitalize;
+  white-space: nowrap;
   border-right: 1px solid #e0e0e0;
   padding: 16px 24px;
   border-bottom: 0px solid #ffffff;
@@ -101,11 +98,9 @@ const StyledTableSortLabel = styled(TableSortLabel)`
 `;
 
 const StyledTableRow = styled(TableRow)`
-  &.MuiTableRow-root {
-    background-color: #000;
-    &:hover {
-      background-color: #ff0000;
-    }
+  background-color: #fff;
+  &:hover {
+    background-color: #f9f9f9;
   }
 `;
 
@@ -178,24 +173,6 @@ const PageIndicator = styled.div`
   margin-right: auto;
 `;
 
-const CardHeader = styled.div`
-  padding: 16px;
-  background-color: #f9f9f9;
-  border-bottom: 1px solid #e0e0e0;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-`;
-
-const HeaderTitle = styled.h6`
-  margin: 0;
-  font-family: "DM Sans", sans-serif;
-  font-weight: bold;
-  font-size: 1rem;
-  color: #007bff;
-  text-transform: capitalize;
-`;
-
 const FilterDropdown = styled.div`
   position: relative;
   display: inline-block;
@@ -230,14 +207,12 @@ const DropdownContent = styled.div`
   border-radius: 4px;
   max-height: 200px;
   overflow-y: auto;
-  width: 10vw;
 `;
 
 const CheckboxContainer = styled.div`
   display: flex;
   align-items: center;
   margin-bottom: 8px;
-  width: 10vw;
 `;
 
 const CheckboxLabel = styled.label`
@@ -245,44 +220,72 @@ const CheckboxLabel = styled.label`
   font-size: 0.875rem;
   margin-left: 8px;
   color: #444;
-  width: 10vw;
 `;
 
-const StyledRadioGroup = styled(RadioGroup)({
-  display: "flex",
-  gap: "16px", // Add space between radio buttons
-  flexDirection: "column",
-});
+const roundToTwo = (num) => {
+  if (typeof num === "number") {
+    return num.toFixed(2);
+  }
+  return num;
+};
 
-const StyledFormControlLabel = styled(FormControlLabel)(({ theme }) => ({
-  border: "1px solid #EAECF0",
-  borderRadius: "8px", // Rounded corners
-  margin: "0", // Remove margin between buttons
-  padding: "1vh", // Padding for each button
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-  textAlign: "center",
-  display: "flex",
-  backgroundColor: "#FFFFFF", // Default background color
-  "& .MuiFormControlLabel-label": {
-    fontFamily: "DM Sans",
-    fontSize: "12px",
-    fontWeight: 400,
-    lineHeight: "16px", // Line height as a string
-    color: "#445164", // Custom text color
-  },
-  "& .MuiRadio-root": {
-    padding: "0 8px", // Padding for radio icon
-    color: "#445164", // Default color for unchecked
-  },
-  "& .MuiRadio-root.Mui-checked": {
-    color: "#4E46B4", // Color when checked
-  },
-  "&:hover": {
-    backgroundColor: "#F3F4F6", // Hover background
-  },
-}));
+const transformData = (tablesData) => {
+  return tablesData.map((row) => {
+    const transformedRow = {};
+
+    // Map the column names to their new names and exclude `_kwh` and `id` columns
+    Object.entries(row).forEach(([key, value]) => {
+      if (!key.includes("_kwh") && key !== "id") {
+        switch (key) {
+          case "APFCS11Reading_kw":
+            transformedRow["APFC(Kwh)"] = value;
+            break;
+          case "DG1S12Reading_kw":
+            transformedRow["DG1(Kwh)"] = value;
+            break;
+          case "DG2S3Reading_kw":
+            transformedRow["DG2(Kwh)"] = value;
+            break;
+          case "EBS10Reading_kw":
+            transformedRow["EB(Kwh)"] = value;
+            break;
+          case "Utility1st2ndFS2Reading_kw_eb":
+            transformedRow["Utility EB(Wh)"] = value;
+            break;
+          case "ThirdFloorZohoS4Reading_kw_eb":
+            transformedRow["Zoho EB(Wh)"] = value;
+            break;
+          case "Skyd1Reading_kw_eb":
+            transformedRow["Skyde EB(Wh)"] = value;
+            break;
+          case "ThirdFifthFloorKotakReading_kw_eb":
+            transformedRow["Kotak EB(Wh)"] = value;
+            break;
+          case "SpareStation3Reading_kw_eb":
+            transformedRow["Spare-3 EB(Wh)"] = value;
+            break;
+          case "SpareS6Reading_kw_eb":
+            transformedRow["Spare-6 EB(Wh)"] = value;
+            break;
+          case "SpareS7Reading_kw_eb":
+            transformedRow["Spare-7 EB(Wh)"] = value;
+            break;
+          case "SixthFloorS5Reading_kw_eb":
+            transformedRow["Sixth Floor EB(Wh)"] = value;
+            break;
+          case "SolarS13Reading_kw":
+            transformedRow["Solar(Kwh)"] = value;
+            break;
+          default:
+            transformedRow[key] = value;
+            break;
+        }
+      }
+    });
+
+    return transformedRow;
+  });
+};
 
 const DataTable = ({
   tablesData,
@@ -305,15 +308,20 @@ const DataTable = ({
 }) => {
   const [sortOrder, setSortOrder] = useState("asc");
   const [sortColumn, setSortColumn] = useState("timestamp");
-  const [visibleColumns, setVisibleColumns] = useState(
-    Object.keys(tablesData[0] || {}).reduce((acc, column) => {
-      acc[column] = true; // Initially, all columns are visible
-      return acc;
-    }, {})
-  );
-  const [showFilter, setShowFilter] = useState(false);
   const [page, setPage] = useState(0);
-  const [filter, setFilter] = useState("All");
+
+  const [showFilter, setShowFilter] = useState(false);
+  console.log("tab data", tablesData);
+
+  const transformedData = transformData(tablesData);
+  const [visibleColumns, setVisibleColumns] = useState(
+    transformedData[0]
+      ? Object.keys(transformedData[0]).reduce((acc, column) => {
+          acc[column] = true; // Set all columns to visible initially
+          return acc;
+        }, {})
+      : {}
+  );
 
   const handleSortRequest = (column) => {
     const isAsc = sortColumn === column && sortOrder === "asc";
@@ -322,55 +330,31 @@ const DataTable = ({
     handleRequestSort(column, isAsc ? "desc" : "asc");
   };
 
-  const handleColumnVisibilityChange = (column) => {
-    setVisibleColumns((prev) => ({
-      ...prev,
-      [column]: !prev[column], // Toggle column visibility
-    }));
-  };
-
   const toggleFilter = () => {
     setShowFilter(!showFilter);
   };
 
-  const handleFilterChange = (event) => {
-    setFilter(event.target.value);
+  const handleColumnVisibilityChange = (column) => {
+    setVisibleColumns((prev) => ({
+      ...prev,
+      [column]: !prev[column],
+    }));
   };
 
-  const filterColumns = (column) => {
-    if (column === "timestamp") {
-      return true; // Always include the timestamp column
-    }
-    if (filter === "All") {
-      return true;
-    } else if (filter === "EB") {
-      return column.endsWith("_eb");
-    } else if (filter === "DG") {
-      return !column.endsWith("_eb");
-    }
-  };
-
-  const filteredColumns = Object.keys(tablesData[0] || {}).filter(
-    (column) =>
-      visibleColumns[column] && filterColumns(column) && column !== "id"
-  );
-
-  const filteredRows = sortedData.filter((row) => {
-    return filteredColumns.some((column) =>
-      String(row[column]).toLowerCase().includes("")
-    );
-  });
-
-  const roundedRows = filteredRows.map((row) => {
+  const filteredRows = transformedData.map((row) => {
     const roundedRow = {};
-    filteredColumns.forEach((column) => {
-      roundedRow[column] =
-        typeof row[column] === "number" ? row[column].toFixed(2) : row[column];
+    Object.entries(row).forEach(([key, value]) => {
+      if (visibleColumns[key]) {
+        roundedRow[key] =
+          key === "timestamp"
+            ? new Date(value).toLocaleString()
+            : roundToTwo(value);
+      }
     });
     return roundedRow;
   });
 
-  const sortedRows = roundedRows.slice().sort((a, b) => {
+  const sortedRows = filteredRows.slice().sort((a, b) => {
     if (b[sortColumn] < a[sortColumn]) {
       return sortOrder === "asc" ? 1 : -1;
     }
@@ -384,7 +368,7 @@ const DataTable = ({
     return <div>No data available</div>;
   }
 
-  const totalPages = Math.ceil(tablesData.length / rowsPerPage);
+  const totalPages = Math.ceil(sortedRows.length / rowsPerPage);
 
   const renderPageNumbers = () => {
     const pageButtons = [];
@@ -393,11 +377,7 @@ const DataTable = ({
     if (totalPages <= maxButtons * 2 + 1) {
       for (let i = 0; i < totalPages; i++) {
         pageButtons.push(
-          <PageNumber
-            key={i}
-            active={page === i}
-            onClick={() => handleChangePageInternal(null, i)}
-          >
+          <PageNumber key={i} active={page === i} onClick={() => setPage(i)}>
             {i + 1}
           </PageNumber>
         );
@@ -408,10 +388,7 @@ const DataTable = ({
 
       if (start > 0) {
         pageButtons.push(
-          <PageNumber
-            key="start"
-            onClick={() => handleChangePageInternal(null, 0)}
-          >
+          <PageNumber key="start" onClick={() => setPage(0)}>
             1
           </PageNumber>
         );
@@ -422,11 +399,7 @@ const DataTable = ({
 
       for (let i = start; i < end; i++) {
         pageButtons.push(
-          <PageNumber
-            key={i}
-            active={page === i}
-            onClick={() => handleChangePageInternal(null, i)}
-          >
+          <PageNumber key={i} active={page === i} onClick={() => setPage(i)}>
             {i + 1}
           </PageNumber>
         );
@@ -440,7 +413,7 @@ const DataTable = ({
           <PageNumber
             key="end"
             active={page === totalPages - 1}
-            onClick={() => handleChangePageInternal(null, totalPages - 1)}
+            onClick={() => setPage(totalPages - 1)}
           >
             {totalPages}
           </PageNumber>
@@ -449,11 +422,6 @@ const DataTable = ({
     }
 
     return pageButtons;
-  };
-
-  const handleChangePageInternal = (event, newPage) => {
-    setPage(newPage);
-    handleChangePage(event, newPage);
   };
 
   return (
@@ -485,7 +453,7 @@ const DataTable = ({
                     <span>Filter Columns</span>
                   </FilterButton>
                   <DropdownContent show={showFilter}>
-                    {Object.keys(tablesData[0]).map((column) => (
+                    {Object.keys(transformedData[0]).map((column) => (
                       <CheckboxContainer key={column}>
                         <input
                           type="checkbox"
@@ -505,82 +473,51 @@ const DataTable = ({
                 timeperiod={timeperiod}
                 setTimeperiod={setTimeperiod}
               />
-
-              <FormControl component="fieldset">
-                <StyledRadioGroup
-                  value={filter}
-                  onChange={handleFilterChange}
-                  aria-label="Power Source"
-                  sx={{ display: "flex", flexDirection: "row" }}
-                >
-                  <StyledFormControlLabel
-                    value="All"
-                    control={<Radio />}
-                    label="All"
-                  />
-                  <StyledFormControlLabel
-                    value="EB"
-                    control={<Radio />}
-                    label="EB Power"
-                  />
-                  <StyledFormControlLabel
-                    value="DG"
-                    control={<Radio />}
-                    label="DG Power"
-                  />
-                </StyledRadioGroup>
-              </FormControl>
             </div>
 
             <StyledTableContainer component={Paper}>
-              <div>
-                <StyledTable>
-                  <TableHead>
-                    <TableRow>
-                      {filteredColumns.map((header) => (
-                        <StyledTableHeader key={header}>
-                          <StyledTableSortLabel
-                            active={sortColumn === header}
-                            direction={sortOrder}
-                            onClick={() => handleSortRequest(header)}
-                          >
-                            {header}
-                          </StyledTableSortLabel>
-                        </StyledTableHeader>
-                      ))}
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {sortedRows
-                      .slice(
-                        page * rowsPerPage,
-                        page * rowsPerPage + rowsPerPage
-                      )
-                      .map((row, rowIndex) => (
-                        <StyledTableRow key={rowIndex}>
-                          {filteredColumns.map((column) => (
-                            <StyledTableCell key={column}>
-                              {column === "timestamp"
-                                ? new Date(row[column]).toLocaleString()
-                                : row[column]}
-                            </StyledTableCell>
-                          ))}
-                        </StyledTableRow>
-                      ))}
-                  </TableBody>
-                </StyledTable>
-              </div>
+              <StyledTable>
+                <TableHead>
+                  <TableRow>
+                    {Object.keys(transformedData[0]).map((header) => (
+                      <StyledTableHeader key={header}>
+                        <StyledTableSortLabel
+                          active={sortColumn === header}
+                          direction={sortOrder}
+                          onClick={() => handleSortRequest(header)}
+                        >
+                          {header}
+                        </StyledTableSortLabel>
+                      </StyledTableHeader>
+                    ))}
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {sortedRows
+                    .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                    .map((row, rowIndex) => (
+                      <StyledTableRow key={rowIndex}>
+                        {Object.keys(row).map((column) => (
+                          <StyledTableCell key={column}>
+                            {row[column]}
+                          </StyledTableCell>
+                        ))}
+                      </StyledTableRow>
+                    ))}
+                </TableBody>
+              </StyledTable>
             </StyledTableContainer>
+
             <PaginationContainer>
               <PageButton
-                onClick={(event) => handleChangePageInternal(event, page - 1)}
+                onClick={() => setPage(page - 1)}
                 disabled={page === 0}
               >
                 ← Previous
               </PageButton>
               <PageIndicator>{renderPageNumbers()}</PageIndicator>
               <PageButton
-                onClick={(event) => handleChangePageInternal(event, page + 1)}
+                onClick={() => setPage(page + 1)}
                 disabled={page >= totalPages - 1}
               >
                 Next →
@@ -589,11 +526,11 @@ const DataTable = ({
           </div>
           <div className="d-flex justify-content-end mb-4">
             <ExportToExcelButton
-              data={roundedRows} // Pass the rounded rows without the `id` column
-              columns={filteredColumns} // Pass the filtered columns without the `id` column
-              filename="table_report.xlsx"
+              data={sortedRows}
+              filename="M2report.xlsx"
               startDatetime={startDate}
               endDatetime={endDate}
+              source="Overall report"
             />
           </div>
         </div>

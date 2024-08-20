@@ -1,8 +1,9 @@
 import React from "react";
-import * as XLSX from "xlsx";
+import { Workbook } from "exceljs";
 import styled from "styled-components";
 import { ReactComponent as DownloadIcon } from "../Assets/reporticon.svg";
 import dayjs from "dayjs"; // Make sure you have dayjs installed: npm install dayjs
+import { saveAs } from "file-saver"; // Install via npm install file-saver
 
 const ExportButton = styled.button`
   font-family: "DM Sans";
@@ -26,12 +27,17 @@ const ExportToExcelButton = ({
   filename,
   startDatetime,
   endDatetime,
+  source,
 }) => {
-  const handleExportExcel = () => {
+  const handleExportExcel = async () => {
     if (!data || data.length === 0) {
       console.warn("No data available for export.");
       return;
     }
+
+    // Initialize the workbook and worksheet
+    const workbook = new Workbook();
+    const worksheet = workbook.addWorksheet("Report");
 
     // Convert the datetime to string format
     const formattedStartDatetime = dayjs(startDatetime).format(
@@ -48,51 +54,105 @@ const ExportToExcelButton = ({
           row[key] !== "" &&
           row[key] !== null &&
           key !== "timestamp" &&
-          key !== "id"
+          key !== "id" &&
+          key !== "kwh" &&
+          key !== "kvah" &&
+          key !== "kwh_eb" &&
+          key !== "kvah_eb" &&
+          key !== "kwh_dg" &&
+          key !== "kvah_dg"
       )
     );
 
-    // Format the data for export
-    const formattedData = data.map((row) => {
-      const formattedRow = {
-        Timeseries: new Date(row.timestamp).toLocaleDateString("en-GB"),
-        ...validColumns.reduce((acc, key) => {
-          acc[key] = row[key] || "";
-          return acc;
-        }, {}),
-      };
-      return formattedRow;
-    });
-
-    const worksheet = XLSX.utils.json_to_sheet(formattedData);
-
-    // Add merged cells for "From Datetime", "To Datetime"
-    worksheet["!merges"] = [
-      { s: { r: 0, c: 1 }, e: { r: 0, c: validColumns.length + 1 } }, // Merge "From Datetime"
-      { s: { r: 1, c: 1 }, e: { r: 1, c: validColumns.length + 1 } }, // Merge "To Datetime"
-    ];
-
-    // Insert the header rows with the correct datetime values
-    XLSX.utils.sheet_add_aoa(
-      worksheet,
-      [
-        ["From Datetime", formattedStartDatetime],
-        ["To Datetime", formattedEndDatetime],
-        ["Timeseries", ...validColumns],
-      ],
-      { origin: "A1" }
+    // Capitalize the first letter of each column name and replace underscores with spaces
+    const capitalizedColumns = validColumns.map((column) =>
+      column
+        .split("_")
+        .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(" ")
     );
 
-    // Move the data down three rows to fit under the header
-    XLSX.utils.sheet_add_json(worksheet, formattedData, {
-      skipHeader: true,
-      origin: "A4",
+    // Add title and merge cells
+    worksheet.mergeCells(1, 1, 1, validColumns.length + 1); // Merge across columns
+    worksheet.getCell("A1").value = "M2 Tech Hub Report";
+    worksheet.getCell("A1").alignment = {
+      horizontal: "center",
+      vertical: "middle",
+    };
+    worksheet.getCell("A1").font = { size: 14, bold: true };
+    worksheet.getCell("A1").fill = {
+      type: "pattern",
+      pattern: "solid",
+      fgColor: { argb: "FFD9EAD3" },
+    };
+
+    // Add the new row for Floor Wise Consumption and merge cells
+    worksheet.mergeCells(2, 1, 2, validColumns.length + 1); // Merge across columns
+    worksheet.getCell("A2").value = `Energy Consumption Report of ${source}`;
+    worksheet.getCell("A2").alignment = {
+      horizontal: "center",
+      vertical: "middle",
+    };
+    worksheet.getCell("A2").font = { size: 12, bold: true };
+    worksheet.getCell("A2").fill = {
+      type: "pattern",
+      pattern: "solid",
+      fgColor: { argb: "FFD9EAD3" }, // Same background color as the title
+    };
+
+    // Adjust the remaining rows accordingly
+    worksheet.addRow(["From Datetime", formattedStartDatetime]);
+    worksheet.mergeCells(3, 2, 3, validColumns.length + 1);
+    worksheet.getCell("A3").fill = {
+      type: "pattern",
+      pattern: "solid",
+      fgColor: { argb: "FF9FC5E8" },
+    };
+
+    worksheet.addRow(["To Datetime", formattedEndDatetime]);
+    worksheet.mergeCells(4, 2, 4, validColumns.length + 1);
+    worksheet.getCell("A4").fill = {
+      type: "pattern",
+      pattern: "solid",
+      fgColor: { argb: "FF9FC5E8" },
+    };
+
+    // Add headers
+    worksheet.addRow(["Timeseries", ...capitalizedColumns]);
+    worksheet.getRow(5).eachCell((cell) => {
+      cell.font = { bold: true };
+      cell.alignment = { horizontal: "center", vertical: "middle" };
+      cell.fill = {
+        type: "pattern",
+        pattern: "solid",
+        fgColor: { argb: "FFD9EAD3" },
+      };
     });
 
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Report");
+    // Add data rows
+    data.forEach((row) => {
+      worksheet.addRow([
+        new Date(row.timestamp).toLocaleString("en-GB"),
+        ...validColumns.map((col) => row[col] || ""),
+      ]);
+    });
 
-    XLSX.writeFile(workbook, filename || "table_report.xlsx");
+    // Auto-fit column widths
+    worksheet.columns.forEach((column) => {
+      let maxLength = 0;
+      column.eachCell({ includeEmpty: true }, (cell) => {
+        const cellValue = cell.value ? cell.value.toString() : "";
+        maxLength = Math.max(maxLength, cellValue.length);
+      });
+      column.width = maxLength + 2; // Add some padding
+    });
+
+    // Write to a file
+    const buffer = await workbook.xlsx.writeBuffer();
+    const blob = new Blob([buffer], {
+      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    });
+    saveAs(blob, filename || "table_report.xlsx");
   };
 
   return (

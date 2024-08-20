@@ -40,7 +40,7 @@ const PowerOutageChart = () => {
             params: {
               start_date_time: startDate.toISOString(),
               end_date_time: endDate.toISOString(),
-              resample_period: "1min",
+              resample_period: "m",
             },
           }
         );
